@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import AppContext from "./context/AppContext";
 import Paper from "@material-ui/core/Paper";
-import WorkspaceView from "./components/Workspace"
+import WorkspaceView from "./views/WorkspaceView"
 import Login from "./views/Login"
 export default function App() {
   let [username, setUsername] = useState('');

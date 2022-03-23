@@ -1,5 +1,6 @@
 import React from 'react';
 import { useContext } from "react";
+import clsx from 'clsx';
 import AppContext from "../context/AppContext";
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -17,18 +18,33 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
-// let { toggleDrawer } = useContext(AppContext);
-
+export default function NavBar(props) {
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
+    display: 'flex'
   },
   appBar: {
-    backgroundColor: '#333333'
+    backgroundColor: '#333333',
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${props.drawerWidth}px)`,
+    marginLeft: props.drawerWidth,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
     marginRight: theme.spacing(2),
     color: '#FDE311'
+  },  
+  hide: {
+    display: 'none',
   },
   title: {
     display: 'none',
@@ -91,7 +107,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+  let { handleDrawerToggle } = useContext(AppContext);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -176,16 +192,19 @@ export default function PrimarySearchAppBar() {
   return (
     <div className={classes.grow}>
       <AppBar 
-      position="static"
-      className={classes.appBar}
+      position="fixed"
+      className={clsx(classes.appBar, {
+        [classes.appBarShift]: props.open,
+      })}
       >
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.menuButton}
+            className={clsx(classes.menuButton, props.open && classes.hide)}
+            // className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
-            // onClick={toggleDrawer(anchor, true)}
+            onClick={props.handleDrawerOpen}
           >
             <MenuIcon />
           </IconButton>

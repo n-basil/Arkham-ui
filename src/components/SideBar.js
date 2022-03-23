@@ -18,7 +18,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-import Workspace 
+import NavBar from './NavBar';
+
+import Workspace from './Workspace';
+
 
 const drawerWidth = 240;
 
@@ -26,12 +29,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
   },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
+  // appBar: {
+  //   transition: theme.transitions.create(['margin', 'width'], {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.leavingScreen,
+  //   }),
+  // },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
@@ -39,12 +42,6 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  hide: {
-    display: 'none',
   },
   drawer: {
     width: drawerWidth,
@@ -79,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PersistentDrawerLeft() {
+export default function SideBar() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -95,13 +92,12 @@ export default function PersistentDrawerLeft() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar>
+      <NavBar
+        handleDrawerOpen={handleDrawerOpen}
+        open={open}
+        drawerWidth={drawerWidth}
+      />
+        {/* <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -114,8 +110,8 @@ export default function PersistentDrawerLeft() {
           <Typography variant="h6" noWrap>
             Persistent drawer
           </Typography>
-        </Toolbar>
-      </AppBar>
+        </Toolbar> */}
+      {/* </NavBar> */}
       <Drawer
         className={classes.drawer}
         variant="persistent"

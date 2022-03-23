@@ -188,8 +188,6 @@ export default function Workspace() {
 
   return (
     <>
-      <AppBar />
-      <SideBar />
       <Graph
         id="graph-id" // id is mandatory
         data={data}

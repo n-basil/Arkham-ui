@@ -1,8 +1,7 @@
 import { Graph } from "react-d3-graph";
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
-import './Workspace.css'
-import AppBar from "../components/AppBar";
+// import AppBar from "../components/AppBar";
 import SideBar from "../components/SideBar";
 
 import Button from "@material-ui/core/Button";
