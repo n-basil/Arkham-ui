@@ -1,0 +1,24 @@
+.paper {
+    background-color: #C0C0C0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    flex-direction: column;
+}
+
+.loginCard {
+    background-color: #333333 !important;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    height: 25%;
+    width: 30%;
+}
+
+.inputs {
+    width: 75%;
+    
+    /* background-color: #FDE311; */
+}
