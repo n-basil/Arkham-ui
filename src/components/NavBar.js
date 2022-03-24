@@ -1,7 +1,6 @@
 import React from 'react';
-import { useContext } from "react";
 import clsx from 'clsx';
-import AppContext from "../context/AppContext";
+
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,7 +17,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
+
+
 export default function NavBar(props) {
+
+
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -107,7 +110,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-  let { handleDrawerToggle } = useContext(AppContext);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -184,7 +186,7 @@ const useStyles = makeStyles((theme) => ({
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>profile</p>
       </MenuItem>
     </Menu>
   );
@@ -201,7 +203,6 @@ const useStyles = makeStyles((theme) => ({
           <IconButton
             edge="start"
             className={clsx(classes.menuButton, props.open && classes.hide)}
-            // className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
             onClick={props.handleDrawerOpen}

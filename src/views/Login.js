@@ -5,32 +5,20 @@ import TextField from "@material-ui/core/TextField";
 import {InputBase} from "@material-ui/core/";
 import Button from "@material-ui/core/Button";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import logo from "../assets/arkham.png";
+import LoginBtn from "../components/loginBtn";
 import "./Login.css";
-
-const useStyles = makeStyles(theme => ({
-  root: {}, // a style rule
-  label: {}, // a nested style rule
-  textField: {
-      border: "1px solid #FDE311",
-      borderRadius: theme.shape.borderRadius,
-      height: "6vh",
-      padding: theme.spacing(2)
-    },
-    button: {
-        backgroundColor: "#FDE311"
-    }
-}));
 
 export default function Login() {
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <Paper className="paper">
       <img src={logo} width="40%" />
       <Card variant="outlined" className="loginCard">
-        <InputBase
+        {/* <InputBase
           className={classes.textField}
           placeholder="Username"
         />
@@ -39,9 +27,10 @@ export default function Login() {
           placeholder="Password"
           type="password"
           autoComplete="current-password"
-        />
-        <Button className={classes.button} variant="contained">LOGIN</Button>
-        <a>REGISTER</a>
+        /> */}
+        <LoginBtn className={classes.button}/>
+        {/* <Button className={classes.button} variant="contained">LOGIN</Button>
+        <a>REGISTER</a> */}
       </Card>
     </Paper>
   );
