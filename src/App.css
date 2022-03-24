@@ -1,3 +1,4 @@
-.MuiButton-root {
-    background-color: #FDE311 !important;
-  }
+#root {
+    background-color: darkgrey;
+    height: 100%;
+}

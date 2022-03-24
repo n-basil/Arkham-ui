@@ -1,5 +1,5 @@
 import { Graph } from "react-d3-graph";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import AppContext from "../context/AppContext";
 
 import { v4 as uuidv4 } from "uuid";
@@ -7,55 +7,58 @@ import "./Workspace.css";
 
 // import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-
-
-// import { useKeycloak } from "@react-keycloak/web";
+import { useKeycloak } from "@react-keycloak/web";
 
 export default function Workspace() {
+  let {
+    username, setUsername,
+    password, setPassword,
+    selectedNode, setSelectedNode,
+    newNode, setNewNode,
+    nodes, setNodes,
+    links, setLinks,
+    selectedLink, setSelectedLink,
+    render, setRender,
+    getAllNodesAndLinks,
+  } = useContext(AppContext);
+  
+  const { keycloak } = useKeycloak();
 
-  // const { keycloak } = useKeycloak();
-
-  // STATE VARIABLES
-  let [selectedNode, setSelectedNode] = useState(null);
-  let [newNode, setNewNode] = useState({});
-  let [nodes, setNodes] = useState([]);
-  let [links, setLinks] = useState([]);
-  let [selectedLink, setSelectedLink] = useState(null);
 
   // graph payload (with minimalist structure)
   let data = {
     nodes: nodes,
     links: links,
   };
+  
 
   // INTERACTIONS WITH API
-  const getAllNodesAndLinks = () => {
-    var myHeaders = new Headers();
+  // const getAllNodesAndLinks = () => {
+  //   var myHeaders = new Headers();
 
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-      mode: "cors",
-    };
+  //   var requestOptions = {
+  //     method: "GET",
+  //     headers: myHeaders,
+  //     redirect: "follow",
+  //     mode: "cors",
+  //   };
 
-    fetch("http://localhost:6969/allNodes", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("GET ALL NODES RESULT: ", result);
-        setNodes(result);
-      })
-      .catch((error) => console.log("GET ALL NODES ERROR: ", error));
+  //   fetch("http://localhost:6969/allNodes", requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       console.log("GET ALL NODES RESULT: ", result);
+  //       setNodes(result);
+  //     })
+  //     .catch((error) => console.log("GET ALL NODES ERROR: ", error));
 
-    fetch("http://localhost:6969/allLinks", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("GET ALL LINKS RESULT: ", result);
-        setLinks(result);
-      })
-      .catch((error) => console.log("GET ALL LINKS ERROR: ", error));
-  };
+  //   fetch("http://localhost:6969/allLinks", requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       console.log("GET ALL LINKS RESULT: ", result);
+  //       setLinks(result);
+  //     })
+  //     .catch((error) => console.log("GET ALL LINKS ERROR: ", error));
+  // };
 
   const addNewNodeToDB = (uuid, nodeToAdd) => {
     var myHeaders = new Headers();
@@ -145,6 +148,8 @@ export default function Workspace() {
       .then((response) => response.json())
       .then((data) => {
         console.log("GET NODE SUCCESS");
+        console.log("data: ", data);
+        setSelectedNode(data[0]);
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET NODE ERROR: ", error));
@@ -228,7 +233,8 @@ export default function Workspace() {
   };
 
   const onClickNode = function (nodeId) {
-    setSelectedNode(nodeId);
+    getNode(nodeId);
+    // setSelectedNode(nodeId);
   };
 
   const onClickLink = function (src, tgt) {
@@ -249,36 +255,33 @@ export default function Workspace() {
 
   const newAddNode = function () {
     let newId = uuidv4();
-    setNodes([...nodes, { id: newId, ...newNode }]);
+    setNodes((nodes) => [...nodes, { id: newId, ...newNode }]);
     addNewNodeToDB(newId, newNode);
-    setLinks([...links, { source: selectedNode, target: newId }]);
+    setLinks((links) => [...links, { source: selectedNode, target: newId }]);
     addNewLinkToDB(selectedNode, newId);
   };
 
-  useEffect(() => {
-    getAllNodesAndLinks();
-    if (selectedNode) {
-      selectedNode.color = "#FF0000";
-    }
-  }, []);
+  // useEffect(() => {
+  //   getAllNodesAndLinks();
+  //   // if (selectedNode) {
+  //   //   selectedNode.color = "#FF0000";
+  //   // }
+  // }, []);
 
   // DON'T DELETE THIS USE EFFECT. It's doing something, and we don't know what.
   useEffect(() => {
-    console.log("Selected Node: ", selectedNode);
-  }, [selectedNode]);
+    console.log("Selected Node Name: ", selectedNode.name);
+
+    // selectedNode.name? console.log("Selected Node Note: ", selectedNode.name) : console.log('no node selected')
+
+  }, [onClickNode]);
 
   useEffect(() => {
     console.log("Selected Link: ", selectedLink);
   }, [selectedLink]);
 
-  let contextObj = {
-    newAddNode,
-    deleteLink,
-    deleteNode,
-  }
-
   return (
-    <AppContext.Provider value={contextObj}>
+      // <div class="canvas">
       <>
         <Graph
           id="graph-id" // id is mandatory
@@ -288,42 +291,10 @@ export default function Workspace() {
           onClickNode={onClickNode}
           onClickLink={onClickLink}
         />
-        {/* <TextField
-          label="Name"
-          name="name"
-          defaultValue="Name"
-          onChange={handeNewNodeChange}
-        /> */}
-
-        {/* <Button variant="contained" onClick={newAddNode}>
-        New Node
-      </Button>
-      <Button variant="contained" onClick={deleteLink}>
-        DELETE LINK
-      </Button>
-      <Button variant="contained" onClick={deleteNode}>
-        DELETE BUTTON
-      </Button> */}
-
-{/* <div>
-     <h1 className="text-black text-4xl">Welcome to the Protected Page.</h1>
-      <ul>
-        <li>
-          tokenParsed.preferred_username: {keycloak.tokenParsed.preferred_username} || {typeof keycloak.tokenParsed.preferred_username}
-    
-        </li>
-        <li>
-          tokenParsed.email:  {keycloak.tokenParsed.nickname} || {typeof keycloak.tokenParsed.nickname}
-        </li>
-        <li>
-          tokenParsed.email: {keycloak.tokenParsed.email} || {typeof keycloak.tokenParsed.email}
-        </li>
-        <li>
-          .subject: {keycloak.subject} || {typeof subject}
-        </li>
-      </ul>
-   </div> */}
+        
       </>
-    </AppContext.Provider>
+
+
+    
   );
 }

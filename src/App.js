@@ -1,28 +1,32 @@
 // REACT
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+import { Route, Routes } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import AppContext from "./context/AppContext";
 // KEY CLOAK
 import { ReactKeycloakProvider } from "@react-keycloak/web";
-// import keycloak from "./Keycloak";
+// import keycloak from "./components/Keycloak";
+
 import Keycloak from "keycloak-js";
 //import ArkhamAuthenticator from "./components/ArkhamAuthenticator";
+import HideRoute from "./components/HideRoute";
 
 // ARKHAM
-import AppContext from "./context/AppContext";
 import Paper from "@material-ui/core/Paper";
 import WorkspaceView from "./views/WorkspaceView";
 import Login from "./views/Login";
 
 export default function App() {
+  // STATE VARIABLES
+  let [selectedNode, setSelectedNode] = useState(false);
+  let [newNode, setNewNode] = useState({});
+  let [nodes, setNodes] = useState([]);
+  let [links, setLinks] = useState([]);
+  let [selectedLink, setSelectedLink] = useState({});
+  let [render, setRender] = useState(false);
   let [username, setUsername] = React.useState("");
   let [password, setPassword] = React.useState("");
-
-  let contextObj = {
-    username,
-    password,
-  };
 
   // This instanciates the keycloak object
   const keycloak = new Keycloak({
@@ -31,27 +35,87 @@ export default function App() {
     clientId: "arkham-ui",
   });
 
+  const getAllNodesAndLinks = () => {
+    var myHeaders = new Headers();
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+      mode: "cors",
+    };
+
+    fetch("http://localhost:6969/allNodes", requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log("GET ALL NODES RESULT: ", result);
+        setNodes(result);
+
+        fetch("http://localhost:6969/allLinks", requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log("GET ALL LINKS RESULT: ", result);
+            setLinks(result);
+          })
+          .catch((error) => console.log("GET ALL LINKS ERROR: ", error));
+      })
+      .catch((error) => console.log("GET ALL NODES ERROR: ", error));
+  };
+
+  useEffect(() => {
+    getAllNodesAndLinks();
+    // if (selectedNode) {
+    //   selectedNode.color = "#FF0000";
+    // }
+  }, []);
+
+  let contextObj = {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    selectedNode,
+    setSelectedNode,
+    newNode,
+    setNewNode,
+    nodes,
+    setNodes,
+    links,
+    setLinks,
+    selectedLink,
+    setSelectedLink,
+    render,
+    setRender,
+    getAllNodesAndLinks,
+  };
+
   return (
     <>
-      <ReactKeycloakProvider authClient={keycloak}>
+  
         <AppContext.Provider value={contextObj}>
+        <ReactKeycloakProvider authClient={keycloak}>
           <Routes>
             <Route path="/" element={<Login />} />
 
             <Route path="/workspace-dev" element={<WorkspaceView />} />
 
+        
+            
             {/* Keycloak Hide page */}
             <Route
               path="/workspace"
               element={
-                <ArkhamAuthenticator.hide>
+                <HideRoute>
+                  <p>wow</p>
                   <WorkspaceView />
-                </ArkhamAuthenticator.hide>
+                </HideRoute>
               }
             />
+            
           </Routes>
+          </ReactKeycloakProvider>
         </AppContext.Provider>
-      </ReactKeycloakProvider>
+      
     </>
   );
 }

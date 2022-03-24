@@ -12,8 +12,8 @@ import LoginBtn from "../components/loginBtn";
 import "./Login.css";
 
 export default function Login() {
-  const classes = useStyles();
-  const theme = useTheme();
+  // const classes = useStyles();
+  // const theme = useTheme();
   return (
     <Paper className="paper">
       <img src={logo} width="40%" />
@@ -28,7 +28,7 @@ export default function Login() {
           type="password"
           autoComplete="current-password"
         /> */}
-        <LoginBtn className={classes.button}/>
+        <LoginBtn />
         {/* <Button className={classes.button} variant="contained">LOGIN</Button>
         <a>REGISTER</a> */}
       </Card>
