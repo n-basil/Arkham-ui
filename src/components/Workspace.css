@@ -3,6 +3,7 @@ svg[name="svg-container-graph-id"] {
     height: calc(100% - 64px) !important;
     margin-top: 64px;
     width: 100% !important;
+    margin: 0px;
     /* height: 100% !important; */
 }
 
