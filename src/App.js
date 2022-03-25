@@ -19,11 +19,7 @@ import Login from "./views/Login";
 
 export default function App() {
   // STATE VARIABLES
-  let [selectedNode, setSelectedNode] = useState(false);
-  let [newNode, setNewNode] = useState({});
-  let [nodes, setNodes] = useState([]);
-  let [links, setLinks] = useState([]);
-  let [selectedLink, setSelectedLink] = useState({});
+  // let [selectedNode, setSelectedNode] = useState(false);
   let [username, setUsername] = React.useState("");
   let [password, setPassword] = React.useState("");
 
@@ -34,53 +30,11 @@ export default function App() {
     clientId: "arkham-ui",
   });
 
-  const getAllNodesAndLinks = () => {
-    var myHeaders = new Headers();
-
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-      mode: "cors",
-    };
-
-    fetch("http://localhost:6969/allNodes", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log("GET ALL NODES RESULT: ", result);
-        setNodes(result);
-
-        fetch("http://localhost:6969/allLinks", requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-            console.log("GET ALL LINKS RESULT: ", result);
-            setLinks(result);
-          })
-          .catch((error) => console.log("GET ALL LINKS ERROR: ", error));
-      })
-      .catch((error) => console.log("GET ALL NODES ERROR: ", error));
-  };
-
-  useEffect(() => {
-    getAllNodesAndLinks();
-  }, []);
-
   let contextObj = {
     username,
     setUsername,
     password,
     setPassword,
-    selectedNode,
-    setSelectedNode,
-    newNode,
-    setNewNode,
-    nodes,
-    setNodes,
-    links,
-    setLinks,
-    selectedLink,
-    setSelectedLink,
-    getAllNodesAndLinks,
   };
 
   return (

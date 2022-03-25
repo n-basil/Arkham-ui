@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideBar(props) {
-  let [ selectedSideView, setSelectedSideView ] = useState('Default')
+  let [ selectedSideView, setSelectedSideView ] = useState('Default');
   const classes = useStyles();
   const theme = useTheme();
 

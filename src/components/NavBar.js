@@ -197,6 +197,7 @@ const useStyles = makeStyles((theme) => ({
       >
         <Toolbar>
           <IconButton
+            data-testid="Hamburger"
             edge="start"
             className={clsx(classes.menuButton, props.open && classes.hide)}
             color="inherit"
@@ -210,6 +211,7 @@ const useStyles = makeStyles((theme) => ({
               <SearchIcon />
             </div>
             <InputBase
+              data-testid="SearchInput"
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
@@ -239,6 +241,7 @@ const useStyles = makeStyles((theme) => ({
               color="inherit"
             >
               <AccountCircle 
+                data-testid="Acct"
                 className={classes.accountButton}
               />
             </IconButton>

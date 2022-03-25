@@ -16,7 +16,7 @@ export default function Login() {
   // const theme = useTheme();
   return (
     <Paper className="paper">
-      <img src={logo} width="40%" />
+      <img data-testid="logo" src={logo} width="40%" />
       <Card variant="outlined" className="loginCard">
         {/* <InputBase
           className={classes.textField}

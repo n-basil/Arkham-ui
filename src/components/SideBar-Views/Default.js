@@ -1,10 +1,11 @@
 import React from "react";
 import { useContext, useEffect } from "react";
-import AppContext from "../../context/AppContext";
+import WorkspaceContext from "../../context/WorkspaceContext";
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -13,11 +14,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 export default function Default(props) {
-  const { newAddNode, deleteLink, deleteNode, selectedNode } =
-    useContext(AppContext);
+  const { selectedNode, deleteNode } =
+    useContext(WorkspaceContext);
+
   const classes = useStyles();
-  const theme = useTheme();
+  // const theme = useTheme();
 
   return (
     <>
@@ -44,7 +48,7 @@ export default function Default(props) {
       </Button>
       <Button
         variant="contained"
-        onClick={deleteLink}
+        // onClick={deleteLink}
         className={classes.button}
       >
         DELETE LINK
@@ -54,7 +58,7 @@ export default function Default(props) {
         onClick={deleteNode}
         className={classes.button}
       >
-        DELETE BUTTON
+        DELETE NODE
       </Button>
     </>
   );
