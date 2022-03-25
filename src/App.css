@@ -1,4 +1,5 @@
 #root {
-    background-color: darkgrey;
-    height: 100%;
+    background-color: #DDDDDD;
+    /* height: calc(100% - 64px) !important; */
+    padding-bottom: 64px;
 }
