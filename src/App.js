@@ -14,7 +14,7 @@ import HideRoute from "./components/HideRoute";
 
 // ARKHAM
 import Paper from "@material-ui/core/Paper";
-import WorkspaceView from "./views/WorkspaceView";
+import Workspace from "./views/Workspace";
 import Login from "./views/Login";
 
 export default function App() {
@@ -24,7 +24,6 @@ export default function App() {
   let [nodes, setNodes] = useState([]);
   let [links, setLinks] = useState([]);
   let [selectedLink, setSelectedLink] = useState({});
-  let [render, setRender] = useState(false);
   let [username, setUsername] = React.useState("");
   let [password, setPassword] = React.useState("");
 
@@ -64,9 +63,6 @@ export default function App() {
 
   useEffect(() => {
     getAllNodesAndLinks();
-    // if (selectedNode) {
-    //   selectedNode.color = "#FF0000";
-    // }
   }, []);
 
   let contextObj = {
@@ -84,8 +80,6 @@ export default function App() {
     setLinks,
     selectedLink,
     setSelectedLink,
-    render,
-    setRender,
     getAllNodesAndLinks,
   };
 
@@ -97,7 +91,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />} />
 
-            <Route path="/workspace-dev" element={<WorkspaceView />} />
+            <Route path="/workspace-dev" element={<Workspace />} />
 
         
             
@@ -107,7 +101,7 @@ export default function App() {
               element={
                 <HideRoute>
                   <p>wow</p>
-                  <WorkspaceView />
+                  <Workspace />
                 </HideRoute>
               }
             />

@@ -1,27 +1,22 @@
 import { Graph } from "react-d3-graph";
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import AppContext from "../context/AppContext";
 
 import { v4 as uuidv4 } from "uuid";
-import "./Workspace.css";
-
-// import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import { useKeycloak } from "@react-keycloak/web";
 
-export default function Workspace() {
+import './Graph.css'
+
+export default function Workspace(props) {
   let {
-    username, setUsername,
-    password, setPassword,
     selectedNode, setSelectedNode,
     newNode, setNewNode,
     nodes, setNodes,
     links, setLinks,
     selectedLink, setSelectedLink,
-    render, setRender,
     getAllNodesAndLinks,
   } = useContext(AppContext);
-  
+
   const { keycloak } = useKeycloak();
 
 
@@ -30,7 +25,7 @@ export default function Workspace() {
     nodes: nodes,
     links: links,
   };
-  
+
 
   // INTERACTIONS WITH API
   // const getAllNodesAndLinks = () => {
@@ -222,29 +217,31 @@ export default function Workspace() {
   const myConfig = {
     nodeHighlightBehavior: true,
     node: {
-      color: "lightgreen",
-      size: 100,
-      highlightStrokeColor: "blue",
+      color: "#FDE311",
+      size: 500,
+      highlightStrokeColor: "#1E90FF",
       labelProperty: "name",
     },
     link: {
-      highlightColor: "lightblue",
+      highlightColor: "#1E90FF",
+      color: '#333333',
+      strokeWidth: 2,
     },
   };
 
   const onClickNode = function (nodeId) {
     getNode(nodeId);
-    // setSelectedNode(nodeId);
-  };
-
-  const onClickLink = function (src, tgt) {
-    setSelectedLink({ source: src, target: tgt });
-    //console.log("selected link source: ", selectedLink.source)
+    props.handleDrawerOpen()
   };
 
   const onMouseOverNode = function (nodeId) {
     // window.alert(`Mouse over node ${nodeId}`);
     // console.log('hover')
+  };
+
+  const onClickLink = function (src, tgt) {
+    setSelectedLink({ source: src, target: tgt });
+    //console.log("selected link source: ", selectedLink.source)
   };
 
   const handeNewNodeChange = function (e) {
@@ -281,20 +278,15 @@ export default function Workspace() {
   }, [selectedLink]);
 
   return (
-      // <div class="canvas">
-      <>
-        <Graph
-          id="graph-id" // id is mandatory
-          data={data}
-          config={myConfig}
-          onMouseOverNode={onMouseOverNode}
-          onClickNode={onClickNode}
-          onClickLink={onClickLink}
-        />
-        
-      </>
-
-
-    
+    // <div class="canvas">
+    <Graph
+      id="graph-id" // id is mandatory
+      data={data}
+      config={myConfig}
+      onMouseOverNode={onMouseOverNode}
+      onClickNode={onClickNode}
+      onClickLink={onClickLink}
+      onClickGraph={props.handleDrawerClose}
+    />
   );
 }
