@@ -91,20 +91,17 @@ export default function Workspace(props) {
   //   // selectedNode.name? console.log("Selected Node Note: ", selectedNode.name) : console.log('no node selected')
   // }, [onClickNode]);
 
-  useEffect(() => {
-    console.log("Selected Link: ", selectedLink);
-  }, [selectedLink]);
 
   return (
     // <div class="canvas">
-      <Graph
-        id="graph-id" // id is mandatory
-        data={data}
-        config={myConfig}
-        onMouseOverNode={onMouseOverNode}
-        onClickNode={onClickNode}
-        onClickLink={onClickLink}
-        onClickGraph={props.handleDrawerClose}
-      />
+    <Graph
+      id="graph-id" // id is mandatory
+      data={data}
+      config={myConfig}
+      onMouseOverNode={onMouseOverNode}
+      onClickNode={onClickNode}
+      onClickLink={onClickLink}
+      onClickGraph={props.handleDrawerClose}
+    />
   );
 }

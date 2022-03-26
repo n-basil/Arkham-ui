@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import AppContext from "../../context/AppContext";
 import WorkspaceContext from "../../context/WorkspaceContext";
 import { v4 as uuidv4 } from "uuid";
@@ -62,8 +62,8 @@ const PrettoSlider = withStyles({
 
 export default function NewNode(props) {
   const classes = useStyles();
-  const { addNewNode, selectedNode, setNewNode } = useContext(WorkspaceContext);
-
+  const { selectedNode, addNewNode, setNodes, setLinks, nodes, links } = useContext(WorkspaceContext);
+  let [newNode, setNewNode] = useState({ id: uuidv4()});
   const handleSubmit = (e) => {
     e.preventDefault()
     let newId = uuidv4();
@@ -74,13 +74,13 @@ export default function NewNode(props) {
       name: e.target.name.value,
       notes: e.target.notes.value,
       color: e.target.color.value,
-      symbolType: e.target.shape.value,
+      symbolType: e.target.symbolType.value,
       size: e.target.size.value
     }
     addNewNode(nodeFromForm)
-
-  
   };
+
+
   return (
     <>
       <ArrowBackIcon
@@ -92,6 +92,7 @@ export default function NewNode(props) {
         <Typography gutterBottom>Name</Typography>
         <InputBase
           name="name"
+          onChange={handleGraphChange}
           className={classes.textField}
           placeholder="Name"
         />
@@ -119,7 +120,7 @@ export default function NewNode(props) {
         </NativeSelect>
         <Typography gutterBottom>Shape</Typography>
         <NativeSelect
-          name="shape"
+          name="symbolType"
           className={classes.textField}
           placeholder=""
           // value={age}
@@ -144,9 +145,9 @@ export default function NewNode(props) {
           defaultValue={200}
         />
         <Button 
-        type="submit"
-        variant="contained" 
-        className={classes.button}
+          type="submit"
+          variant="contained" 
+          className={classes.button}
         >
           Make Node
         </Button>

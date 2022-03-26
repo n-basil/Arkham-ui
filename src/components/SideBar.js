@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react"
+
 import Default from  "./SideBar-Views/Default";
 import NewNode from "./SideBar-Views/NewNode"
 
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideBar(props) {
   let [ selectedSideView, setSelectedSideView ] = useState('Default');
+ 
   const classes = useStyles();
   const theme = useTheme();
 
@@ -42,7 +44,9 @@ export default function SideBar(props) {
     if (selectedSideView === 'Default') {
       return <Default setSelectedSideView={setSelectedSideView}/>;
     } else if (selectedSideView === 'NewNode') {
-      return <NewNode setSelectedSideView={setSelectedSideView}/>;
+      return <NewNode 
+      setSelectedSideView={setSelectedSideView}
+      />;
     }
   }
 

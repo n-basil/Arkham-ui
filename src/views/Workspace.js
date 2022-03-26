@@ -11,8 +11,6 @@ import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
-import { v4 as uuidv4 } from 'uuid';
-
 
 const drawerWidth = 240;
 
@@ -50,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Workspace() {
   const classes = useStyles();
   const theme = useTheme();
-  let [newNode, setNewNode] = useState({});
   let [nodes, setNodes] = useState([]);
   let [links, setLinks] = useState([]);
   let [selectedLink, setSelectedLink] = useState({});
@@ -58,6 +55,11 @@ export default function Workspace() {
   let [selectedNode, setSelectedNode] = useState(false);
   let [render, setRender] = useState(false);
   // let [ selectedSideView, setSelectedSideView ] = useState('Default');
+
+const baseURL = {
+  development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
+  production: ``
+}[process.env.NODE_ENV || "developement"];
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -78,7 +80,7 @@ export default function Workspace() {
   //     mode: "cors",
   //   };
 
-  //   fetch("http://localhost:6969/allNodes", requestOptions)
+  //   fetch("${baseURL}/allNodes", requestOptions)
   //     .then((response) => response.json())
   //     .then((result) => {
   //       console.log("GET ALL NODES RESULT: ", result);
@@ -86,7 +88,7 @@ export default function Workspace() {
   //     })
   //     .catch((error) => console.log("GET ALL NODES ERROR: ", error));
 
-  //   fetch("http://localhost:6969/allLinks", requestOptions)
+  //   fetch("${baseURL}/allLinks", requestOptions)
   //     .then((response) => response.json())
   //     .then((result) => {
   //       console.log("GET ALL LINKS RESULT: ", result);
@@ -105,13 +107,13 @@ export default function Workspace() {
       mode: "cors",
     };
 
-    fetch("http://localhost:6969/allNodes", requestOptions)
+    fetch(`${baseURL}/allNodes`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log("GET ALL NODES RESULT: ", result);
         setNodes(result);
 
-        fetch("http://localhost:6969/allLinks", requestOptions)
+        fetch(`${baseURL}/allLinks`, requestOptions)
           .then((response) => response.json())
           .then((result) => {
             console.log("GET ALL LINKS RESULT: ", result);
@@ -141,7 +143,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    return fetch("http://localhost:6969/node", requestOptions)
+    return fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then((data) => console.log("NODE ADDED: ", data))
       .catch((error) => console.error("ADD NODE ERROR: ", error));
@@ -159,7 +161,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    return fetch("http://localhost:6969/link", requestOptions)
+    return fetch(`${baseURL}/link`, requestOptions)
       .then((response) => response.json())
       .then((data) => console.log("LINK ADDED"))
       .catch((error) => console.log("ADD LINK ERROR: ", error));
@@ -170,7 +172,7 @@ export default function Workspace() {
    * @param {*} nodeToAdd 
    */
   const addNewNode = function (nodeToAdd) {
-    console.log("YOU MADE IT NEW ADDNEWNODE")
+    // console.log("YOU MADE IT NEW ADDNEWNODE")
 
     // Send the new node to the database
     addNewNodeToDB(nodeToAdd)
@@ -208,7 +210,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/link", requestOptions)
+    fetch(`${baseURL}/link`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log("LINK DELETED");
@@ -228,36 +230,35 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/node", requestOptions)
+    fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then(() => {
-   
-        console.log("links before delete", links);
-        console.log('nodes before delete', nodes);
+        // NOTE: This is a little hacky. We need to remove the links from the state before we recall the nodes from the database to prevent a crash.
+      setLinks([]);
+      getAllNodesAndLinks();
 
-        
-
-        const tempLinks = links.filter(e => {
-          console.log("TEMP LINKS E: ", e);
-          return e.source !== selectedNode.id && e.target !== selectedNode.id;
-        });
-        console.log("TEMP LINKS: ", tempLinks)
-        setLinks(tempLinks);
-
-
-        console.log("SELECTED NODE: ", selectedNode)
-        const tempNodes = nodes.splice(nodes.indexOf(selectedNode));
-        // const tempNodes = nodes.filter((node) => console.log(node.id));
-        console.log("TEMP NODES", tempNodes)
-        setNodes(tempNodes);
-        console.log(tempNodes)
-
-
-
-        
-      })
+      //   const tempLinks = links.filter(e => {
+      //     console.log("TEMP LINKS E: ", e);
+      //     return e.source !== selectedNode.id && e.target !== selectedNode.id;
+      //   });
+      //   console.log("TEMP LINKS: ", tempLinks)
+      //   setLinks(tempLinks);     
+      // })
+      // .then(() => {
+      // console.log("SELECTED NODE: ", selectedNode)
+      // const tempNodes = nodes.splice(nodes.indexOf(selectedNode));
+      // // const tempNodes = nodes.filter((node) => console.log(node.id));
+      // console.log("TEMP NODES", tempNodes)
+      // setNodes(tempNodes);
+      // console.log(tempNodes)
+    })
       .catch((error) => console.log("DELETE NODE ERROR: ", error));
+      
   };
+
+  // useEffect(() => {
+  //   SelectedNodeRender()
+  // }, [links]);
 
   const getNode = (nodeId) => {
     var myHeaders = new Headers();
@@ -269,7 +270,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    return fetch("http://localhost:6969/node", requestOptions)
+    return fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then((nodeFromDB) => {
         console.log("GET NODE SUCCESS");
@@ -291,7 +292,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/node", requestOptions)
+    fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then((nodeFromDB) => {
         console.log("GET NODE SELECT SUCCESS");
@@ -312,7 +313,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/node", requestOptions)
+    fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log("PATCH NODE SUCCESS");
@@ -338,7 +339,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    return fetch("http://localhost:6969/link", requestOptions)
+    return fetch(`${baseURL}/link`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log("GET LINK SUCCESS");
@@ -360,7 +361,7 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/node", requestOptions)
+    fetch(`${baseURL}/node`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log("PATCH LINK SUCCESS");
@@ -378,8 +379,6 @@ export default function Workspace() {
     updateNode,
     getLink,
     updateLink,
-    newNode,
-    setNewNode,
     nodes,
     setNodes,
     addNewNode,
