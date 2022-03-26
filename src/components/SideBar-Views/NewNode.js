@@ -74,8 +74,8 @@ export default function NewNode(props) {
       name: e.target.name.value,
       notes: e.target.notes.value,
       color: e.target.color.value,
-      shape: e.target.shape.value
-      // size: e.target.size.value
+      symbolType: e.target.shape.value,
+      size: e.target.size.value
     }
     addNewNode(nodeFromForm)
 
@@ -140,8 +140,8 @@ export default function NewNode(props) {
           valueLabelDisplay="auto"
           aria-label="pretto slider"
           min={0}
-          max={600}
-          defaultValue={20}
+          max={1000}
+          defaultValue={200}
         />
         <Button 
         type="submit"

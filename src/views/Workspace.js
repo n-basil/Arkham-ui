@@ -11,6 +11,9 @@ import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import { v4 as uuidv4 } from 'uuid';
+
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -53,6 +56,7 @@ export default function Workspace() {
   let [selectedLink, setSelectedLink] = useState({});
   const [open, setOpen] = React.useState(false);
   let [selectedNode, setSelectedNode] = useState(false);
+  let [render, setRender] = useState(false);
   // let [ selectedSideView, setSelectedSideView ] = useState('Default');
 
   const handleDrawerOpen = () => {
@@ -118,6 +122,9 @@ export default function Workspace() {
       .catch((error) => console.log("GET ALL NODES ERROR: ", error));
   };
 
+  /**
+   * On site load, get all nodes and links from the database.
+   */
   useEffect(() => {
     getAllNodesAndLinks();
   }, []);
@@ -137,8 +144,9 @@ export default function Workspace() {
     return fetch("http://localhost:6969/node", requestOptions)
       .then((response) => response.json())
       .then((data) => console.log("NODE ADDED: ", data))
-      .catch((error) => console.log("ADD NODE ERROR: ", error));
+      .catch((error) => console.error("ADD NODE ERROR: ", error));
   };
+
 
   const addNewLinkToDB = (src, tgt) => {
     var myHeaders = new Headers();
@@ -151,23 +159,44 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/link", requestOptions)
+    return fetch("http://localhost:6969/link", requestOptions)
       .then((response) => response.json())
       .then((data) => console.log("LINK ADDED"))
       .catch((error) => console.log("ADD LINK ERROR: ", error));
   };
 
+  /**
+   * Function to add a new node with link to the database.
+   * @param {*} nodeToAdd 
+   */
   const addNewNode = function (nodeToAdd) {
     console.log("YOU MADE IT NEW ADDNEWNODE")
-    // let newId = uuidv4();
-    //setNodes((nodes) => [...nodes, { id: newId, ...newNode }]);
+
+    // Send the new node to the database
     addNewNodeToDB(nodeToAdd)
+      //Get the nodes from the database after a successful add.
       .then(() => getNode(nodeToAdd.id))
-      .then((nodeFromDB) => setNodes([...nodes, nodeFromDB]))
-    //setLinks((links) => [...links, { source: selectedNode, target: newId }]);
-    //addNewLinkToDB(selectedNode.id, newId);
+      .then((nodeFromDB) => {
+        // Add the new batch of nodes to the state
+        setNodes([...nodes, nodeFromDB]);
+        // Detect if the user selected a node
+        if (selectedNode) {
+          console.log('selectedNode for Link', selectedNode)
+          // If they did, add a link between the two for the database
+          addNewLinkToDB(selectedNode.id, nodeFromDB.id)
+            .then(() => getLink(selectedNode.id, nodeFromDB.id))
+            .then((linkFromDB) => {
+              console.log('linkFromDB', linkFromDB);
+              setLinks([...links, linkFromDB]);
+            })
+          }
+      })
   };
 
+  /**
+   * Remove a link from the database then update the current canvas.
+   * 
+   */
   const deleteLink = () => {
     var myHeaders = new Headers();
     myHeaders.append("source", selectedLink.source);
@@ -183,6 +212,7 @@ export default function Workspace() {
       .then((response) => response.json())
       .then((data) => {
         console.log("LINK DELETED");
+        // Recall state from database and refresh the canvas.
         getAllNodesAndLinks();
       })
       .catch((error) => console.log("DELETE LINK ERROR: ", error));
@@ -190,7 +220,7 @@ export default function Workspace() {
 
   const deleteNode = () => {
     var myHeaders = new Headers();
-    myHeaders.append("id", selectedNode);
+    myHeaders.append("id", selectedNode.id);
 
     var requestOptions = {
       method: "DELETE",
@@ -200,9 +230,31 @@ export default function Workspace() {
 
     fetch("http://localhost:6969/node", requestOptions)
       .then((response) => response.json())
-      .then((data) => {
-        console.log("NODE DELETED");
-        //setTimeout(getAllNodesAndLinks(), 500);
+      .then(() => {
+   
+        console.log("links before delete", links);
+        console.log('nodes before delete', nodes);
+
+        
+
+        const tempLinks = links.filter(e => {
+          console.log("TEMP LINKS E: ", e);
+          return e.source !== selectedNode.id && e.target !== selectedNode.id;
+        });
+        console.log("TEMP LINKS: ", tempLinks)
+        setLinks(tempLinks);
+
+
+        console.log("SELECTED NODE: ", selectedNode)
+        const tempNodes = nodes.splice(nodes.indexOf(selectedNode));
+        // const tempNodes = nodes.filter((node) => console.log(node.id));
+        console.log("TEMP NODES", tempNodes)
+        setNodes(tempNodes);
+        console.log(tempNodes)
+
+
+
+        
       })
       .catch((error) => console.log("DELETE NODE ERROR: ", error));
   };
@@ -222,8 +274,28 @@ export default function Workspace() {
       .then((nodeFromDB) => {
         console.log("GET NODE SUCCESS");
         console.log("Node From DB: ", nodeFromDB);
-        setSelectedNode(nodeFromDB[0])
+        //setSelectedNode(nodeFromDB[0])
         return nodeFromDB[0]
+        //setTimeout(getAllNodesAndLinks(), 500);
+      })
+      .catch((error) => console.log("GET NODE ERROR: ", error));
+  };
+
+  const getNodeSelection = (nodeId) => {
+    var myHeaders = new Headers();
+    myHeaders.append("id", nodeId);
+
+    var requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    fetch("http://localhost:6969/node", requestOptions)
+      .then((response) => response.json())
+      .then((nodeFromDB) => {
+        console.log("GET NODE SELECT SUCCESS");
+        setSelectedNode(nodeFromDB[0])
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET NODE ERROR: ", error));
@@ -249,11 +321,16 @@ export default function Workspace() {
       .catch((error) => console.log("PATCH NODE ERROR: ", error));
   };
 
-  const getLink = (src, tgt, update) => {
+  /**
+   * Gets the links from the database and adds them to the state
+   * @param {uuid} src 
+   * @param {uuid} tgt 
+   * @param {*} update 
+   */
+  const getLink = (src, tgt) => {
     var myHeaders = new Headers();
     myHeaders.append("source", src);
     myHeaders.append("target", tgt);
-    myHeaders.append("update", update); //update needs to be following format: {param: paramValue}
 
     var requestOptions = {
       method: "GET",
@@ -261,19 +338,21 @@ export default function Workspace() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:6969/link", requestOptions)
+    return fetch("http://localhost:6969/link", requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log("GET LINK SUCCESS");
+        return data[0]
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET LINK ERROR: ", error));
   };
 
-  const updateLink = (src, tgt) => {
+  const updateLink = (src, tgt, update) => {
     var myHeaders = new Headers();
     myHeaders.append("source", src);
     myHeaders.append("target", tgt);
+    myHeaders.append("update", update);
 
     var requestOptions = {
       method: "PATCH",
@@ -307,6 +386,7 @@ export default function Workspace() {
     links,
     setLinks,
     getAllNodesAndLinks,
+    getNodeSelection
   };
 
   return (

@@ -6,7 +6,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
-
 const useStyles = makeStyles((theme) => ({
   button: {
     backgroundColor: "#FDE311",
@@ -14,29 +13,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
-
 export default function Default(props) {
-  const { selectedNode, deleteNode } =
-    useContext(WorkspaceContext);
+  const { selectedNode, deleteNode } = useContext(WorkspaceContext);
 
   const classes = useStyles();
-  // const theme = useTheme();
+
+  const SelectedNodeRender = () => {
+    return (
+      <>
+        {selectedNode ? (
+          <>
+            <Typography gutterBottom variant="h5" component="h2">
+              {selectedNode.name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {selectedNode.notes}
+            </Typography>
+          </>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  };
+
+  useEffect(() => {
+    SelectedNodeRender()
+  }, [selectedNode]);
 
   return (
     <>
-      {selectedNode ? (
-        <>
-          <Typography gutterBottom variant="h5" component="h2">
-            {selectedNode.name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            {selectedNode.notes}
-          </Typography>
-        </>
-      ) : (
-        <></>
-      )}
+      <SelectedNodeRender />
       <Button
         variant="contained"
         onClick={() => {
@@ -46,13 +53,13 @@ export default function Default(props) {
       >
         New Node
       </Button>
-      <Button
+      {/* <Button
         variant="contained"
         // onClick={deleteLink}
         className={classes.button}
       >
         DELETE LINK
-      </Button>
+      </Button> */}
       <Button
         variant="contained"
         onClick={deleteNode}

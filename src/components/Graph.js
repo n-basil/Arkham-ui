@@ -25,6 +25,7 @@ export default function Workspace(props) {
     selectedLink,
     setSelectedLink,
     getAllNodesAndLinks,
+    getNodeSelection,
   } = useContext(WorkspaceContext);
 
   const { keycloak } = useKeycloak();
@@ -56,7 +57,7 @@ export default function Workspace(props) {
   };
 
   const onClickNode = function (nodeId) {
-    getNode(nodeId);
+    getNodeSelection(nodeId);
     props.handleDrawerOpen();
   };
 
@@ -84,11 +85,11 @@ export default function Workspace(props) {
   // }, []);
 
   // DON'T DELETE THIS USE EFFECT. It's doing something, and we don't know what.
-  useEffect(() => {
-    console.log("Selected Node Name: ", selectedNode.name);
+  // useEffect(() => {
+  //   console.log("Selected Node Name: ", selectedNode.name);
 
-    // selectedNode.name? console.log("Selected Node Note: ", selectedNode.name) : console.log('no node selected')
-  }, [onClickNode]);
+  //   // selectedNode.name? console.log("Selected Node Note: ", selectedNode.name) : console.log('no node selected')
+  // }, [onClickNode]);
 
   useEffect(() => {
     console.log("Selected Link: ", selectedLink);
