@@ -40,6 +40,11 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
   },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
   drawerContent: {
     padding: theme.spacing(1)
   }
@@ -107,7 +112,7 @@ export default function NewNode(props) {
           )}
         </IconButton>
       </div>
-      <div className={classes.drawerHeader}>
+      <div className={classes.backButton}>
       <Divider />
       <IconButton>
         <ArrowBackIcon
@@ -168,7 +173,7 @@ export default function NewNode(props) {
           valueLabelDisplay="auto"
           aria-label="pretto slider"
           min={0}
-          max={50000}
+          max={2500}
           defaultValue={500}
         />
         <div className={classes.formButtons}>

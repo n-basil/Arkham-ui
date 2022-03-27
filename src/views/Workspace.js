@@ -56,6 +56,7 @@ export default function Workspace() {
   let [render, setRender] = useState(false);
   let [ selectedSideView, setSelectedSideView ] = useState("Default");
   let [ nodesLinked, setNodesLinked ] = useState("");
+  let [ nodesLinkedTo, setNodesLinkedTo ] = useState("");
 
 const baseURL = {
   development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
@@ -190,8 +191,8 @@ const baseURL = {
           addNewLinkToDB(selectedNode.id, nodeFromDB.id)
             .then(() => getLink(selectedNode.id, nodeFromDB.id))
             .then((linkFromDB) => {
-              console.log('linkFromDB', linkFromDB);
-              setLinks([...links, linkFromDB]);
+              console.log('linkFromDB', linkFromDB[0]);
+              setLinks([...links, linkFromDB[0]]);
             })
           }
       })
@@ -223,6 +224,8 @@ const baseURL = {
   };
 
   const deleteNode = () => {
+    setSelectedNode(false);
+    handleDrawerClose();
     var myHeaders = new Headers();
     myHeaders.append("id", selectedNode.id);
 
@@ -345,8 +348,9 @@ const baseURL = {
       .then((response) => response.json())
       .then((data) => {
         console.log("GET LINK SUCCESS");
-        if (data.length === 1) { return data[0] }
-        else { return data }
+        // if (data.length === 1) { return data[0] }
+        // else { return data }
+        return data
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET LINK ERROR: ", error));
@@ -414,7 +418,9 @@ const baseURL = {
     handleDrawerClose,
     handleDrawerOpen,
     nodesLinked,
-    setNodesLinked
+    setNodesLinked,
+    nodesLinkedTo,
+    setNodesLinkedTo,
   };
 
   return (

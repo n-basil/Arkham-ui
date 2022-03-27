@@ -30,7 +30,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Default(props) {
-  const { selectedNode, deleteNode, handleDrawerClose, getLink, nodesLinked, setNodesLinked } = useContext(WorkspaceContext);
+  const { selectedNode, 
+    deleteNode, 
+    handleDrawerClose, 
+    getLink, 
+    deleteLink,
+
+    nodesLinked, setNodesLinked,
+    nodesLinkedTo, setNodesLinkedTo } = useContext(WorkspaceContext);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -46,8 +53,12 @@ export default function Default(props) {
             <Typography variant="body2" color="textSecondary" component="p">
               {selectedNode.notes}
             </Typography>
+            <Divider/>
             <Typography variant="body2" color="textSecondary" component="p">
-              Node Linked: 
+              Linked: {nodesLinked}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              Linked to: {nodesLinkedTo}
             </Typography>
           </div>
         ) : (
@@ -58,14 +69,24 @@ export default function Default(props) {
   };
 
   useEffect(() => {
-    // getLink(selectedNode.id, 'sans').then((data) => {
-    //   setNodesLinked(data.map((el) => {
-    //     return el.name
-    //   }).join(', '));
-    // })
-    // console.log(
-    //   nodesLinked
-    // )
+    // //Gets nodes linked to selectedNode
+    getLink(selectedNode.id, 'sans').then((data) => {
+      setNodesLinked(data.map((el) => {
+        return el.name
+        // return (
+        //   <>
+        //   <RemoveCircleIcon/>
+        //     {el.name}
+        //   </>
+        //   )
+      }).join(', '));
+    })
+    //Gets nodes that selectedNode are linked to
+    getLink('sans', selectedNode.id).then((data) => {
+      setNodesLinkedTo(data.map((el) => {
+        return el.name
+      }).join(', '));
+    })
     SelectedNodeRender()
   }, [selectedNode]);
 

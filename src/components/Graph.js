@@ -58,20 +58,30 @@ export default function Workspace(props) {
     },
   };
 
-  const onClickNode = function (nodeId) {
-    getNodeSelection(nodeId);
-    handleDrawerOpen();
-    setSelectedSideView("Default")
-  };
+  // const onClickNode = function (nodeId) {
+  //   getNodeSelection(nodeId);
+  //   handleDrawerOpen();
+  //   setSelectedSideView("Default")
+  // };
 
   const onMouseOverNode = function (nodeId) {
     // window.alert(`Mouse over node ${nodeId}`);
     // console.log('hover')
   };
 
+  const onClickNode = function (nodeId) {
+    getNodeSelection(nodeId);
+    handleDrawerOpen();
+    setSelectedSideView("Default")
+  };
+
   const onClickLink = function (src, tgt) {
     setSelectedLink({ source: src, target: tgt });
     //console.log("selected link source: ", selectedLink.source)
+  };
+  const onClickGraph = function () {
+    props.handleDrawerClose()
+    setSelectedNode(false)
   };
 
   const handeNewNodeChange = function (e) {
@@ -104,7 +114,7 @@ export default function Workspace(props) {
       onMouseOverNode={onMouseOverNode}
       onClickNode={onClickNode}
       onClickLink={onClickLink}
-      onClickGraph={props.handleDrawerClose}
+      onClickGraph={onClickGraph}
     />
   );
 }
