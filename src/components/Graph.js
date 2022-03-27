@@ -26,6 +26,8 @@ export default function Workspace(props) {
     setSelectedLink,
     getAllNodesAndLinks,
     getNodeSelection,
+    setSelectedSideView,
+    handleDrawerOpen
   } = useContext(WorkspaceContext);
 
   const { keycloak } = useKeycloak();
@@ -58,7 +60,8 @@ export default function Workspace(props) {
 
   const onClickNode = function (nodeId) {
     getNodeSelection(nodeId);
-    props.handleDrawerOpen();
+    handleDrawerOpen();
+    setSelectedSideView("Default")
   };
 
   const onMouseOverNode = function (nodeId) {

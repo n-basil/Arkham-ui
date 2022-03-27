@@ -1,21 +1,27 @@
 import React from "react";
 import { useContext, useEffect, useState } from "react";
-import AppContext from "../../context/AppContext";
+import { v4 as uuidv4 } from 'uuid';
 import WorkspaceContext from "../../context/WorkspaceContext";
-import { v4 as uuidv4 } from "uuid";
 
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles, useTheme } from "@material-ui/core/styles";
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import { InputBase } from "@material-ui/core/";
+import Divider from "@material-ui/core/Divider";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
-  button: {
-    backgroundColor: "#FDE311",
-    margin: "2%",
+  formButtons: {
+    display: 'flex',
+    flexDirection: "row",
+    justifyContent: "flex-end"
   },
 
   textField: {
@@ -23,9 +29,20 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#F2F2F2",
     borderRadius: theme.shape.borderRadius,
     height: "6vh",
+    width: "100%",
     padding: theme.spacing(1),
-    margin: "2vh",
   },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-end",
+  },
+  drawerContent: {
+    padding: theme.spacing(1)
+  }
 }));
 
 const PrettoSlider = withStyles({
@@ -58,12 +75,11 @@ const PrettoSlider = withStyles({
   },
 })(Slider);
 
-
-
 export default function NewNode(props) {
   const classes = useStyles();
-  const { selectedNode, addNewNode, setNodes, setLinks, nodes, links } = useContext(WorkspaceContext);
-  let [newNode, setNewNode] = useState({ id: uuidv4()});
+  const theme = useTheme();
+  const { handleDrawerClose, addNewNode, setNodes, setLinks, nodes, links } = useContext(WorkspaceContext);
+  let [newNode, setNewNode] = useState({ id: uuidv4() });
   const handleSubmit = (e) => {
     e.preventDefault()
     let newId = uuidv4();
@@ -80,19 +96,34 @@ export default function NewNode(props) {
     addNewNode(nodeFromForm)
   };
 
-
   return (
     <>
-      <ArrowBackIcon
-        onClick={() => {
-          props.setSelectedSideView("Default");
-        }}
-      />
-      <form onSubmit={(e) => {handleSubmit(e)}}>
+      <div className={classes.drawerHeader}>
+        <IconButton onClick={handleDrawerClose}>
+          {theme.direction === "ltr" ? (
+            <ChevronLeftIcon />
+          ) : (
+            <ChevronRightIcon />
+          )}
+        </IconButton>
+      </div>
+      <div className={classes.drawerHeader}>
+      <Divider />
+      <IconButton>
+        <ArrowBackIcon
+          onClick={() => {
+            props.setSelectedSideView("Default");
+          }}
+        />
+      </IconButton>
+      </div>
+      <form
+        onSubmit={(e) => { handleSubmit(e) }}
+        className={classes.drawerContent}
+      >
         <Typography gutterBottom>Name</Typography>
         <InputBase
           name="name"
-          onChange={handleGraphChange}
           className={classes.textField}
           placeholder="Name"
         />
@@ -106,51 +137,49 @@ export default function NewNode(props) {
           placeholder="Notes"
         />
         <Typography gutterBottom>Color</Typography>
-        <NativeSelect
+        <Select
           name="color"
           className={classes.textField}
-          // value={age}
-          // onChange={handleChange}
-          // input={<BootstrapInput />}
+          displayEmpty
+          disableUnderline
         >
-          <option aria-label="None" value="" />
-          <option value={"blue"}>Blue</option>
-          <option value={"red"}>Red</option>
-          <option value={"yellow"}>Yellow</option>
-        </NativeSelect>
+          <MenuItem alue={"yellow"}>Yellow</MenuItem>
+          <MenuItem value={"red"}>Red</MenuItem>
+          <MenuItem value={"blue"}>Blue</MenuItem>
+          <MenuItem value={"Green"}>Green</MenuItem>
+        </Select>
         <Typography gutterBottom>Shape</Typography>
-        <NativeSelect
+        <Select
           name="symbolType"
           className={classes.textField}
-          placeholder=""
-          // value={age}
-          // onChange={handleChange}
-          // input={<BootstrapInput />}
+          displayEmpty
+          disableUnderline
         >
-          <option aria-label="None" value="" />
-          <option value={"circle"}>Circle</option>
-          <option value={"cross"}>Cross</option>
-          <option value={"diamond"}>Diamond</option>
-          <option value={"star"}>star</option>
-          <option value={"triangle"}>Triangle</option>
-          <option value={"wye"}>Wye</option>
-        </NativeSelect>
+          <MenuItem alue={"circle"}>Circle</MenuItem>
+          <MenuItem value={"cross"}>Cross</MenuItem>
+          <MenuItem value={"diamond"}>Diamond</MenuItem>
+          <MenuItem value={"star"}>Star</MenuItem>
+          <MenuItem value={"triangle"}>Triangle</MenuItem>
+          <MenuItem value={"wye"}>Wye</MenuItem>
+        </Select>
         <Typography gutterBottom>Size</Typography>
         <PrettoSlider
           name="size"
           valueLabelDisplay="auto"
           aria-label="pretto slider"
           min={0}
-          max={1000}
-          defaultValue={200}
+          max={50000}
+          defaultValue={500}
         />
-        <Button 
-          type="submit"
-          variant="contained" 
-          className={classes.button}
-        >
-          Make Node
-        </Button>
+        <div className={classes.formButtons}>
+          <Button
+            type="submit"
+            variant="contained"
+            style={{ backgroundColor: "#FDE311" }}
+          >
+            Add Node
+          </Button>
+        </div>
       </form>
     </>
   );

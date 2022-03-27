@@ -54,7 +54,8 @@ export default function Workspace() {
   const [open, setOpen] = React.useState(false);
   let [selectedNode, setSelectedNode] = useState(false);
   let [render, setRender] = useState(false);
-  // let [ selectedSideView, setSelectedSideView ] = useState('Default');
+  let [ selectedSideView, setSelectedSideView ] = useState("Default");
+  let [ nodesLinked, setNodesLinked ] = useState("");
 
 const baseURL = {
   development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
@@ -67,6 +68,7 @@ const baseURL = {
 
   const handleDrawerClose = () => {
     setOpen(false);
+    setSelectedSideView('Default')
   };
 
   // INTERACTIONS WITH API
@@ -343,11 +345,32 @@ const baseURL = {
       .then((response) => response.json())
       .then((data) => {
         console.log("GET LINK SUCCESS");
-        return data[0]
+        if (data.length === 1) { return data[0] }
+        else { return data }
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET LINK ERROR: ", error));
   };
+
+  // const getLinkBySrc = (src, tgt) => {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("source", src);
+
+  //   var requestOptions = {
+  //     method: "GET",
+  //     headers: myHeaders,
+  //     redirect: "follow",
+  //   };
+
+  //   return fetch(`${baseURL}/link`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log("GET LINK SUCCESS");
+  //       return data[0]
+  //       //setTimeout(getAllNodesAndLinks(), 500);
+  //     })
+  //     .catch((error) => console.log("GET LINK ERROR: ", error));
+  // };
 
   const updateLink = (src, tgt, update) => {
     var myHeaders = new Headers();
@@ -373,6 +396,8 @@ const baseURL = {
   let contextObj = {
     selectedNode,
     setSelectedNode,
+    selectedSideView,
+    setSelectedSideView,
     deleteLink,
     deleteNode,
     getNode,
@@ -385,7 +410,11 @@ const baseURL = {
     links,
     setLinks,
     getAllNodesAndLinks,
-    getNodeSelection
+    getNodeSelection,
+    handleDrawerClose,
+    handleDrawerOpen,
+    nodesLinked,
+    setNodesLinked
   };
 
   return (
@@ -398,7 +427,10 @@ const baseURL = {
           open={open}
           drawerWidth={drawerWidth}
         />
-        <SideBar open={open} handleDrawerClose={handleDrawerClose} />
+        <SideBar 
+        open={open} 
+        handleDrawerClose={handleDrawerClose} 
+        />
         <main
           className={clsx(classes.content, {
             [classes.contentShift]: open,

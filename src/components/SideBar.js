@@ -1,15 +1,14 @@
 import React from "react";
-import { useState } from "react"
+import { useContext } from "react"
+import WorkspaceContext from "../context/WorkspaceContext";
+
 
 import Default from  "./SideBar-Views/Default";
 import NewNode from "./SideBar-Views/NewNode"
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+
 
 const drawerWidth = 240;
 
@@ -21,23 +20,13 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundColor: '#C0C0C0',
-    padding: theme.spacing(1)
-  },
-  drawerHeader: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
-  },
+  }
 }));
 
 export default function SideBar(props) {
-  let [ selectedSideView, setSelectedSideView ] = useState('Default');
- 
+  // let [ selectedSideView, setSelectedSideView ] = useState('Default');
+  const { selectedSideView, setSelectedSideView } = useContext(WorkspaceContext);
   const classes = useStyles();
-  const theme = useTheme();
 
   function SideBarRender() {
     console.log('view:', selectedSideView)
@@ -60,16 +49,6 @@ export default function SideBar(props) {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={props.handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
         <SideBarRender />      
       </Drawer>
   );
