@@ -12,6 +12,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 
+
 const useStyles = makeStyles((theme) => ({
   button: {
     color: "#FDE311",
@@ -25,22 +26,34 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-end",
   },
   drawerContent: {
-      padding: theme.spacing(1)
+    padding: theme.spacing(1)
   }
 }));
 
-export default function Default(props) {
-  const { selectedNode, 
-    deleteNode, 
-    handleDrawerClose, 
-    getLink, 
-    deleteLink,
 
-    nodesLinked, setNodesLinked,
-    nodesLinkedTo, setNodesLinkedTo } = useContext(WorkspaceContext);
+
+export default function Default(props) {
+  const { selectedNode,
+    deleteNode,
+    handleDrawerClose,
+    getLink,
+    deleteLink,
+    links,
+    selectedNodeLinks, setSelectedNodeLinks,
+    fileUpload, setFileUpload, postFile } = useContext(WorkspaceContext);
 
   const classes = useStyles();
   const theme = useTheme();
+
+  const handleFileChange = (e) => {
+    console.log("HANDLE FILE CHANGE: ", e.target.files)
+    setFileUpload(e.target.files[0])
+  }
+
+  const linksRender = selectedNodeLinks.map((link) => {
+    return link.name;
+  })
+
 
   const SelectedNodeRender = () => {
     return (
@@ -53,42 +66,23 @@ export default function Default(props) {
             <Typography variant="body2" color="textSecondary" component="p">
               {selectedNode.notes}
             </Typography>
-            <Divider/>
+            <Divider />
             <Typography variant="body2" color="textSecondary" component="p">
-              Linked: {nodesLinked}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              Linked to: {nodesLinkedTo}
+              Linked to: {linksRender.join(", ")}
             </Typography>
           </div>
         ) : (
-          <></>
+          <>
+            <form method="post" action='/file' enctype="multipart/form-data" onSubmit={(e) => postFile(e)}>
+              <p> Workspace File Upload </p>
+              <input type="file" name="fileName" onChange={handleFileChange} />
+              <button type="submit"> Upload File </button>
+            </form>
+          </>
         )}
       </>
     );
   };
-
-  useEffect(() => {
-    // //Gets nodes linked to selectedNode
-    getLink(selectedNode.id, 'sans').then((data) => {
-      setNodesLinked(data.map((el) => {
-        return el.name
-        // return (
-        //   <>
-        //   <RemoveCircleIcon/>
-        //     {el.name}
-        //   </>
-        //   )
-      }).join(', '));
-    })
-    //Gets nodes that selectedNode are linked to
-    getLink('sans', selectedNode.id).then((data) => {
-      setNodesLinkedTo(data.map((el) => {
-        return el.name
-      }).join(', '));
-    })
-    SelectedNodeRender()
-  }, [selectedNode]);
 
   return (
     <>
@@ -114,7 +108,11 @@ export default function Default(props) {
           // onClick={deleteLink}
           className={classes.button}
         >
-          <EditIcon />
+          <EditIcon
+            onClick={() => {
+              props.setSelectedSideView("EditNode");
+            }}
+          />
         </IconButton>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === "ltr" ? (

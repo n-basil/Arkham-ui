@@ -10,11 +10,13 @@
 .loginCard {
     background-color: #333333 !important;
     display: flex;
+   
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
     height: 25%;
-    width: 30%;
+    /* width: 40%; */
+    width: 460px;
 }
 
 .inputs {

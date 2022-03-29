@@ -8,7 +8,7 @@ import { useKeycloak } from "@react-keycloak/web";
 
 import "./Graph.css";
 
-export default function Workspace(props) {
+export default function GraphRender(props) {
 
   let {
     getNode,
@@ -27,7 +27,12 @@ export default function Workspace(props) {
     getAllNodesAndLinks,
     getNodeSelection,
     setSelectedSideView,
-    handleDrawerOpen
+    handleDrawerOpen,
+    setNodesLinked,
+    getLink,
+    nodesLinked,
+    setNodesLinkedTo,
+    nodesLinkedTo
   } = useContext(WorkspaceContext);
 
   const { keycloak } = useKeycloak();
@@ -70,8 +75,9 @@ export default function Workspace(props) {
   };
 
   const onClickNode = function (nodeId) {
-    getNodeSelection(nodeId);
     handleDrawerOpen();
+    let node = nodes.find(el => el.id === nodeId);
+    setSelectedNode(node)
     setSelectedSideView("Default")
   };
 
@@ -89,6 +95,17 @@ export default function Workspace(props) {
     let name = target.name;
     setNewNode({ [name]: target.value });
   };
+
+  // useEffect(() => {
+  //   getLink(selectedNode.id, 'sans').then((data) => {
+  //     setNodesLinked(data)
+  //     console.log('nodesLinked: ', nodesLinked)
+  //   })
+  //   getLink('sans', selectedNode.id).then((data) => {
+  //     setNodesLinkedTo(data)
+  //     console.log('nodesLinkedTo: ', nodesLinkedTo)
+  //   })
+  // }, [selectedNode]);
 
   // useEffect(() => {
   //   getAllNodesAndLinks();

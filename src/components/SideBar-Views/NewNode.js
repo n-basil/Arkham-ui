@@ -40,10 +40,10 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
   },
-  drawerHeader: {
+  backButton: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-end",
+    // justifyContent: "flex-start",
   },
   drawerContent: {
     padding: theme.spacing(1)
@@ -112,36 +112,37 @@ export default function NewNode(props) {
           )}
         </IconButton>
       </div>
-      <div className={classes.backButton}>
       <Divider />
-      <IconButton>
-        <ArrowBackIcon
-          onClick={() => {
-            props.setSelectedSideView("Default");
-          }}
-        />
-      </IconButton>
+      <div className={classes.backButton}>
+        <IconButton>
+          <ArrowBackIcon
+            fontSize="small"
+            onClick={() => {
+              props.setSelectedSideView("Default");
+            }}
+          />
+        </IconButton>
       </div>
       <form
         onSubmit={(e) => { handleSubmit(e) }}
         className={classes.drawerContent}
       >
-        <Typography gutterBottom>Name</Typography>
+        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Name:</Typography>
         <InputBase
           name="name"
           className={classes.textField}
-          placeholder="Name"
+          placeholder="Alpha"
         />
-        <Typography gutterBottom>Notes</Typography>
+        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Notes:</Typography>
         <InputBase
           name="notes"
           multiline
           rows={7}
           className={classes.textField}
           style={{ height: "20vh" }}
-          placeholder="Notes"
+          placeholder="Always take notes..."
         />
-        <Typography gutterBottom>Color</Typography>
+        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Color:</Typography>
         <Select
           name="color"
           className={classes.textField}
@@ -153,7 +154,7 @@ export default function NewNode(props) {
           <MenuItem value={"blue"}>Blue</MenuItem>
           <MenuItem value={"Green"}>Green</MenuItem>
         </Select>
-        <Typography gutterBottom>Shape</Typography>
+        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Shape:</Typography>
         <Select
           name="symbolType"
           className={classes.textField}
@@ -167,7 +168,7 @@ export default function NewNode(props) {
           <MenuItem value={"triangle"}>Triangle</MenuItem>
           <MenuItem value={"wye"}>Wye</MenuItem>
         </Select>
-        <Typography gutterBottom>Size</Typography>
+        <Typography gutterTop variant="body2" color="textSecondary" component="p">Size:</Typography>
         <PrettoSlider
           name="size"
           valueLabelDisplay="auto"

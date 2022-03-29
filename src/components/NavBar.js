@@ -13,6 +13,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
+import LoginBtn from "../components/loginBtn";
+
 
 
 export default function NavBar(props) {
@@ -143,6 +145,7 @@ const useStyles = makeStyles((theme) => ({
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <LoginBtn />
     </Menu>
   );
 

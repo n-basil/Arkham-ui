@@ -4,7 +4,7 @@ import WorkspaceContext from "../context/WorkspaceContext";
 // import AppContext from "./context/AppContext";
 
 import NavBar from "../components/NavBar";
-import Graph from "../components/Graph";
+import GraphRender from "../components/GraphRender";
 import SideBar from "../components/SideBar";
 
 import clsx from "clsx";
@@ -48,15 +48,21 @@ const useStyles = makeStyles((theme) => ({
 export default function Workspace() {
   const classes = useStyles();
   const theme = useTheme();
-  let [nodes, setNodes] = useState([]);
-  let [links, setLinks] = useState([]);
+  let [nodes, setNodes] = useState(false);
+  let [links, setLinks] = useState(false);
   let [selectedLink, setSelectedLink] = useState({});
   const [open, setOpen] = React.useState(false);
   let [selectedNode, setSelectedNode] = useState(false);
   let [render, setRender] = useState(false);
   let [ selectedSideView, setSelectedSideView ] = useState("Default");
-  let [ nodesLinked, setNodesLinked ] = useState("");
-  let [ nodesLinkedTo, setNodesLinkedTo ] = useState("");
+  let [ selectedNodeLinks, setSelectedNodeLinks ] = useState([])
+  let [ linksRender , setLinksRender ] = useState(false)
+  let [ fileUpload, setFileUpload ] = useState(false);
+
+  // let setSelectedNode = function (node) {
+  //   console.log('setSelectedNode with node: ', node)
+  //   setSelectedNodeOG(node)
+  // }
 
 const baseURL = {
   development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
@@ -131,6 +137,7 @@ const baseURL = {
    * On site load, get all nodes and links from the database.
    */
   useEffect(() => {
+    console.log('workspace use effect')
     getAllNodesAndLinks();
   }, []);
 
@@ -151,7 +158,6 @@ const baseURL = {
       .then((data) => console.log("NODE ADDED: ", data))
       .catch((error) => console.error("ADD NODE ERROR: ", error));
   };
-
 
   const addNewLinkToDB = (src, tgt) => {
     var myHeaders = new Headers();
@@ -202,10 +208,13 @@ const baseURL = {
    * Remove a link from the database then update the current canvas.
    * 
    */
-  const deleteLink = () => {
+  const deleteLink = (src, tgt) => {
     var myHeaders = new Headers();
-    myHeaders.append("source", selectedLink.source);
-    myHeaders.append("target", selectedLink.target);
+    // myHeaders.append("source", selectedLink.source);
+    // myHeaders.append("target", selectedLink.target);
+
+    myHeaders.append("source", src);
+    myHeaders.append("target", tgt);
 
     var requestOptions = {
       method: "DELETE",
@@ -287,26 +296,6 @@ const baseURL = {
       .catch((error) => console.log("GET NODE ERROR: ", error));
   };
 
-  const getNodeSelection = (nodeId) => {
-    var myHeaders = new Headers();
-    myHeaders.append("id", nodeId);
-
-    var requestOptions = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    fetch(`${baseURL}/node`, requestOptions)
-      .then((response) => response.json())
-      .then((nodeFromDB) => {
-        console.log("GET NODE SELECT SUCCESS");
-        setSelectedNode(nodeFromDB[0])
-        //setTimeout(getAllNodesAndLinks(), 500);
-      })
-      .catch((error) => console.log("GET NODE ERROR: ", error));
-  };
-
   const updateNode = (nodeId, update) => {
     var myHeaders = new Headers();
     myHeaders.append("id", nodeId);
@@ -347,10 +336,19 @@ const baseURL = {
     return fetch(`${baseURL}/link`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log("GET LINK SUCCESS");
+        console.log("GET LINK SUCCESS: ", data);
+        return data
+        // if (tgt === 'sans') {
+        //   setNodesLinked(data)
+        //   console.log('nodesLinked: ', nodesLinked)
+        // } else if (src === 'sans') {
+        //   setNodesLinkedTo(data)
+        //   console.log('nodesLinkedTo: ', nodesLinkedTo)
+        // } else {
+
+        // }
         // if (data.length === 1) { return data[0] }
         // else { return data }
-        return data
         //setTimeout(getAllNodesAndLinks(), 500);
       })
       .catch((error) => console.log("GET LINK ERROR: ", error));
@@ -397,6 +395,56 @@ const baseURL = {
       .catch((error) => console.log("PATCH LINK ERROR: ", error));
   };
 
+  const postFile = (e) => {
+    e.preventDefault()
+    console.log("POST FILE CHECK: ", fileUpload)
+    var myHeaders = new Headers()
+    myHeaders.append("Content-Type", 'multipart/form-data; boundary="cool boundary"')
+
+    const formData = new FormData()
+    formData.append('fileName', fileUpload)
+    //formData.append('fileName', fileUpload.name)
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: formData,
+      redirect: "follow",
+    }
+
+    fetch(`${baseURL}/file`, requestOptions)
+      .then((response) => response.text())
+      .then((data) => {
+        console.log("FILE POST SUCCESSFUL")
+      })
+      .catch((error) => console.log("FILE POST ERROR: ", error))
+  }
+
+  useEffect(() => {
+    if (links) {
+      let tempArr = []
+      let matchingLinks = links.filter(el => selectedNode.id === el.source || selectedNode.id === el.target)
+
+      matchingLinks.forEach((el) => {
+        if (el.source === selectedNode.id) {
+          tempArr.push(el.target)
+        } else if (el.target === selectedNode.id) {
+          tempArr.push(el.source)
+        }
+      })
+      let nameIdArr = []
+      tempArr.forEach((id) => {
+        nodes.forEach((node) => {
+          if (id === node.id) {
+            nameIdArr.push({id: node.id, name: node.name})
+          }
+        })
+      })
+      setSelectedNodeLinks(nameIdArr)
+    }
+  }, [selectedNode]);
+
+
   let contextObj = {
     selectedNode,
     setSelectedNode,
@@ -414,15 +462,17 @@ const baseURL = {
     links,
     setLinks,
     getAllNodesAndLinks,
-    getNodeSelection,
     handleDrawerClose,
     handleDrawerOpen,
-    nodesLinked,
-    setNodesLinked,
-    nodesLinkedTo,
-    setNodesLinkedTo,
+    selectedNodeLinks,
+    setSelectedNodeLinks,
+    fileUpload,
+    setFileUpload,
+    postFile,
+    linksRender,
+    setLinksRender
   };
-
+  console.log('rendering workspace')
   return (
     <WorkspaceContext.Provider value={contextObj}>
       <div className={classes.root}>
@@ -443,7 +493,7 @@ const baseURL = {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Graph
+          <GraphRender
             data-testid='Graph'
             handleDrawerOpen={handleDrawerOpen}
             handleDrawerClose={handleDrawerClose}

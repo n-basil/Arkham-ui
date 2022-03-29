@@ -1,10 +1,11 @@
 import React from "react";
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import WorkspaceContext from "../context/WorkspaceContext";
 
 
 import Default from  "./SideBar-Views/Default";
 import NewNode from "./SideBar-Views/NewNode"
+import EditNode from "./SideBar-Views/EditNode"
 
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -24,22 +25,37 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideBar(props) {
-  // let [ selectedSideView, setSelectedSideView ] = useState('Default');
-  const { selectedSideView, setSelectedSideView } = useContext(WorkspaceContext);
+  const { selectedSideView, setSelectedSideView, deleteLink } = useContext(WorkspaceContext);
+  // let setSelectedSideView = function (view) {
+  //   console.log('setSelectedSideView call with: ', view)
+  //   setSelectedSideViewOG(view)
+  // }
   const classes = useStyles();
 
   function SideBarRender() {
     console.log('view:', selectedSideView)
     if (selectedSideView === 'Default') {
-      return <Default setSelectedSideView={setSelectedSideView}/>;
+      return <Default 
+      setSelectedSideView={setSelectedSideView}
+      />;
     } else if (selectedSideView === 'NewNode') {
       return <NewNode 
       setSelectedSideView={setSelectedSideView}
       />;
     }
+    else if (selectedSideView === 'EditNode') {
+      return <EditNode 
+      setSelectedSideView={setSelectedSideView}
+      />;
+    }
   }
 
+  useEffect(() => {
+    SideBarRender()
+  }, [deleteLink])
+
   return (
+    // <></>
       <Drawer
         className={classes.drawer}
         variant="persistent"
