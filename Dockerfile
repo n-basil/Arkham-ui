@@ -1,11 +1,23 @@
-FROM node:latest
+# FROM node:latest
 
-WORKDIR /arkham-ui
+# WORKDIR /arkham-ui
 
-COPY package.json ./
-COPY package-lock.json ./
-COPY ./ ./
+# # COPY . /arkham-ui
+# VOLUME $(pwd):/arkham-ui
 
-RUN npm i
+# EXPOSE 3000
 
-CMD ["npm", "start"]
+FROM node:14-alpine
+
+RUN mkdir -p /src/app
+
+WORKDIR /src/app
+
+COPY . /src/app
+
+# RUN npm install
+
+EXPOSE 3000
+
+
+CMD [ "npm", "start"]

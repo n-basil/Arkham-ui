@@ -85,6 +85,7 @@ export default function NewNode(props) {
   const theme = useTheme();
   const { handleDrawerClose, addNewNode, setNodes, setLinks, nodes, links } = useContext(WorkspaceContext);
   let [newNode, setNewNode] = useState({ id: uuidv4() });
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     let newId = uuidv4();

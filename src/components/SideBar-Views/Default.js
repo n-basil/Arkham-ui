@@ -11,6 +11,9 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
+import Button from "@material-ui/core/Button";
+
+import "./Default.css";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
+    justifyContent: "center",
   },
   drawerContent: {
     padding: theme.spacing(1)
@@ -51,32 +54,58 @@ export default function Default(props) {
   }
 
   const linksRender = selectedNodeLinks.map((link) => {
-    return link.name;
-  })
 
+    return (
+      <>
+        <br />
+        <p>{link.name}</p>
+      </>
+    )
+  })
 
   const SelectedNodeRender = () => {
     return (
       <>
         {selectedNode ? (
           <div className={classes.drawerContent}>
-            <Typography gutterBottom variant="h5" component="h2">
+            <Typography gutterBottom variant="h3" component="h3">
               {selectedNode.name}
             </Typography>
+            <Typography component="h5" variant="h5">
+                Notes:
+              </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
               {selectedNode.notes}
             </Typography>
             <Divider />
+            <Typography component="h5" variant="h5">
+                Links:
+              </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              Linked to: {linksRender.join(", ")}
+              {linksRender}
             </Typography>
           </div>
         ) : (
           <>
-            <form method="post" action='/file' enctype="multipart/form-data" onSubmit={(e) => postFile(e)}>
+            {/* <form onSubmit={(e) => postFile(e)}>
               <p> Workspace File Upload </p>
-              <input type="file" name="fileName" onChange={handleFileChange} />
+              <input type="file" name="avatar" onChange={handleFileChange} />
               <button type="submit"> Upload File </button>
+            </form> */}
+
+            <form action='http://arkhamdevops.eastus.cloudapp.azure.com:6969/file' enctype="multipart/form-data" method="POST" >
+              <Typography  color="textSecondary" component="h4" variant="h4">
+                Upload Data
+              </Typography>
+              <input type="file" name="avatar"/>
+              {/* <input type="submit" value="Upload a file" /> */}
+              <Button
+                type="submit"
+                variant="contained"
+                style={{ backgroundColor: "#FDE311", marginRight: "auto", float: "right" }}
+              >
+              Upload
+              </Button>
             </form>
           </>
         )}
@@ -103,7 +132,7 @@ export default function Default(props) {
         >
           <RemoveCircleIcon />
         </IconButton>
-        <IconButton
+        {selectedNode? <IconButton
           variant="contained"
           // onClick={deleteLink}
           className={classes.button}
@@ -114,7 +143,12 @@ export default function Default(props) {
             }}
           />
         </IconButton>
-        <IconButton onClick={handleDrawerClose}>
+        :
+        <></>}
+        <IconButton 
+        style={{selfAlign: 'flex-end'}}
+        onClick={handleDrawerClose}
+        >
           {theme.direction === "ltr" ? (
             <ChevronLeftIcon />
           ) : (

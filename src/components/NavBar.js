@@ -14,6 +14,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import LoginBtn from "../components/loginBtn";
+import logo from "../assets/Arkham_Logo.svg";
 
 
 
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     backgroundColor: '#333333',
+    maxHeight: '64px',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -39,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
+  },
+  logo: {
+    display: 'flex-inline'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -223,8 +228,11 @@ const useStyles = makeStyles((theme) => ({
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
+          
           <div className={classes.grow} />
+          {/* <img data-testid="logo" src={logo} className={classes.logo}/> */}
           <div className={classes.sectionDesktop}>
+          
             {/* <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
@@ -235,6 +243,7 @@ const useStyles = makeStyles((theme) => ({
                 <NotificationsIcon />
               </Badge>
             </IconButton> */}
+            
             <IconButton
               edge="end"
               aria-label="account of current user"

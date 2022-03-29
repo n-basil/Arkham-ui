@@ -50,6 +50,11 @@ export default function GraphRender(props) {
   // the graph configuration, just override the ones you need
   const myConfig = {
     nodeHighlightBehavior: true,
+    d3: {
+      gravity: -400,
+      // collapsible: true,
+      // directed: true,
+    },
     node: {
       color: "#FDE311",
       size: 500,

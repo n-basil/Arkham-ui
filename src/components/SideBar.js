@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideBar(props) {
-  const { selectedSideView, setSelectedSideView, deleteLink } = useContext(WorkspaceContext);
+  const { selectedSideView, setSelectedSideView, selectedNode, selectedNodeLinks, setRender, render } = useContext(WorkspaceContext);
   // let setSelectedSideView = function (view) {
   //   console.log('setSelectedSideView call with: ', view)
   //   setSelectedSideViewOG(view)
@@ -33,7 +33,7 @@ export default function SideBar(props) {
   const classes = useStyles();
 
   function SideBarRender() {
-    console.log('view:', selectedSideView)
+    console.log('view rendered with:', selectedSideView)
     if (selectedSideView === 'Default') {
       return <Default 
       setSelectedSideView={setSelectedSideView}
@@ -43,16 +43,19 @@ export default function SideBar(props) {
       setSelectedSideView={setSelectedSideView}
       />;
     }
-    else if (selectedSideView === 'EditNode') {
+    else if (selectedSideView === 'EditNode' && selectedNode) {
       return <EditNode 
       setSelectedSideView={setSelectedSideView}
       />;
     }
   }
 
-  useEffect(() => {
-    SideBarRender()
-  }, [deleteLink])
+  // useEffect(() => {
+  //   SideBarRender()
+  //   console.log('linked: ', selectedNodeLinks)
+  //   setRender(!render)
+  //   // console.log('notLinked: ', linksNotSelected)
+  // }, [selectedNode])
 
   return (
     // <></>

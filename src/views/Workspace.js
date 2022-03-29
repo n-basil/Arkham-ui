@@ -1,5 +1,5 @@
 import React from "react";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import WorkspaceContext from "../context/WorkspaceContext";
 // import AppContext from "./context/AppContext";
 
@@ -54,20 +54,21 @@ export default function Workspace() {
   const [open, setOpen] = React.useState(false);
   let [selectedNode, setSelectedNode] = useState(false);
   let [render, setRender] = useState(false);
-  let [ selectedSideView, setSelectedSideView ] = useState("Default");
-  let [ selectedNodeLinks, setSelectedNodeLinks ] = useState([])
-  let [ linksRender , setLinksRender ] = useState(false)
-  let [ fileUpload, setFileUpload ] = useState(false);
+  let [selectedSideView, setSelectedSideView] = useState("Default");
+  let [selectedNodeLinks, setSelectedNodeLinks] = useState([])
+  let [linksRender, setLinksRender] = useState(false)
+  let [fileUpload, setFileUpload] = useState(false);
+  let [linksNotSelected, setLinksNotSelected] = useState(false)
 
   // let setSelectedNode = function (node) {
   //   console.log('setSelectedNode with node: ', node)
   //   setSelectedNodeOG(node)
   // }
 
-const baseURL = {
-  development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
-  production: ``
-}[process.env.NODE_ENV || "developement"];
+  const baseURL = {
+    development: `http://arkhamdevops.eastus.cloudapp.azure.com:6969`,
+    production: ``
+  }[process.env.NODE_ENV || "developement"];
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -172,7 +173,10 @@ const baseURL = {
 
     return fetch(`${baseURL}/link`, requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log("LINK ADDED"))
+      .then((data) => {
+        console.log("LINK ADDED")
+        getAllNodesAndLinks()
+      })
       .catch((error) => console.log("ADD LINK ERROR: ", error));
   };
 
@@ -200,9 +204,40 @@ const baseURL = {
               console.log('linkFromDB', linkFromDB[0]);
               setLinks([...links, linkFromDB[0]]);
             })
-          }
+        }
       })
   };
+
+  const editNodeInDB = (nodeToEdit) => {
+    console.log('nodeToEdit: ', nodeToEdit)
+    var myHeaders = new Headers();
+    //myHeaders.append("id", uuid);
+    myHeaders.append("node", JSON.stringify(nodeToEdit));
+
+    var requestOptions = {
+      method: "PATCH",
+      headers: myHeaders,
+      body: nodeToEdit,
+      redirect: "follow",
+    };
+
+    return fetch(`${baseURL}/node`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log("NODE EDITED: ", data))
+      .catch((error) => console.error("NODE EDIT ERROR: ", error));
+  };
+
+  const editNode = function (nodeToEdit) {
+    // console.log("YOU MADE IT NEW ADDNEWNODE")
+
+    // Send the edited node to the database
+    editNodeInDB(nodeToEdit)
+      .then((data) => {
+        console.log('data from editDB', data)
+        getAllNodesAndLinks();
+      })
+  };
+
 
   /**
    * Remove a link from the database then update the current canvas.
@@ -228,6 +263,7 @@ const baseURL = {
         console.log("LINK DELETED");
         // Recall state from database and refresh the canvas.
         getAllNodesAndLinks();
+        // setRender(!render)
       })
       .catch((error) => console.log("DELETE LINK ERROR: ", error));
   };
@@ -248,26 +284,26 @@ const baseURL = {
       .then((response) => response.json())
       .then(() => {
         // NOTE: This is a little hacky. We need to remove the links from the state before we recall the nodes from the database to prevent a crash.
-      setLinks([]);
-      getAllNodesAndLinks();
+        setLinks([]);
+        getAllNodesAndLinks();
 
-      //   const tempLinks = links.filter(e => {
-      //     console.log("TEMP LINKS E: ", e);
-      //     return e.source !== selectedNode.id && e.target !== selectedNode.id;
-      //   });
-      //   console.log("TEMP LINKS: ", tempLinks)
-      //   setLinks(tempLinks);     
-      // })
-      // .then(() => {
-      // console.log("SELECTED NODE: ", selectedNode)
-      // const tempNodes = nodes.splice(nodes.indexOf(selectedNode));
-      // // const tempNodes = nodes.filter((node) => console.log(node.id));
-      // console.log("TEMP NODES", tempNodes)
-      // setNodes(tempNodes);
-      // console.log(tempNodes)
-    })
+        //   const tempLinks = links.filter(e => {
+        //     console.log("TEMP LINKS E: ", e);
+        //     return e.source !== selectedNode.id && e.target !== selectedNode.id;
+        //   });
+        //   console.log("TEMP LINKS: ", tempLinks)
+        //   setLinks(tempLinks);     
+        // })
+        // .then(() => {
+        // console.log("SELECTED NODE: ", selectedNode)
+        // const tempNodes = nodes.splice(nodes.indexOf(selectedNode));
+        // // const tempNodes = nodes.filter((node) => console.log(node.id));
+        // console.log("TEMP NODES", tempNodes)
+        // setNodes(tempNodes);
+        // console.log(tempNodes)
+      })
       .catch((error) => console.log("DELETE NODE ERROR: ", error));
-      
+
   };
 
   // useEffect(() => {
@@ -402,7 +438,7 @@ const baseURL = {
     myHeaders.append("Content-Type", 'multipart/form-data; boundary="cool boundary"')
 
     const formData = new FormData()
-    formData.append('fileName', fileUpload)
+    formData.append('avatar', fileUpload)
     //formData.append('fileName', fileUpload.name)
 
     var requestOptions = {
@@ -422,34 +458,45 @@ const baseURL = {
 
   useEffect(() => {
     if (links) {
-      let tempArr = []
+      setSelectedNodeLinks([])
+      setLinksNotSelected([])
+      let linkedIds = []
+
       let matchingLinks = links.filter(el => selectedNode.id === el.source || selectedNode.id === el.target)
 
       matchingLinks.forEach((el) => {
         if (el.source === selectedNode.id) {
-          tempArr.push(el.target)
+          linkedIds.push(el.target)
         } else if (el.target === selectedNode.id) {
-          tempArr.push(el.source)
+          linkedIds.push(el.source)
         }
       })
-      let nameIdArr = []
-      tempArr.forEach((id) => {
-        nodes.forEach((node) => {
-          if (id === node.id) {
-            nameIdArr.push({id: node.id, name: node.name})
-          }
-        })
-      })
-      setSelectedNodeLinks(nameIdArr)
+
+      console.log('linkedIds: ', linkedIds)
+      console.log('selectedNode: ', selectedNode)
+
+      const nameIdLinkedArr = nodes.filter(node => linkedIds.includes(node.id));
+      const nameIdNotLinkedArr = nodes.filter(node => !linkedIds.includes(node.id));
+
+      setSelectedNodeLinks(nameIdLinkedArr)
+      setLinksNotSelected(nameIdNotLinkedArr)
+
+      console.log('selectedNodeLinks: ', selectedNodeLinks)
+      console.log('linksNotSelected: ', linksNotSelected)
     }
   }, [selectedNode]);
 
+  // useEffect(() => {
+  //   setSelectedNodeLinks({ name: 'mocknode' })
+  // }, [links])
 
   let contextObj = {
-    selectedNode,
-    setSelectedNode,
+    selectedNode, setSelectedNode,
+    render, setRender,
+    linksNotSelected,
     selectedSideView,
     setSelectedSideView,
+    addNewLinkToDB,
     deleteLink,
     deleteNode,
     getNode,
@@ -470,7 +517,8 @@ const baseURL = {
     setFileUpload,
     postFile,
     linksRender,
-    setLinksRender
+    setLinksRender,
+    editNode
   };
   console.log('rendering workspace')
   return (
@@ -483,9 +531,9 @@ const baseURL = {
           open={open}
           drawerWidth={drawerWidth}
         />
-        <SideBar 
-        open={open} 
-        handleDrawerClose={handleDrawerClose} 
+        <SideBar
+          open={open}
+          handleDrawerClose={handleDrawerClose}
         />
         <main
           className={clsx(classes.content, {

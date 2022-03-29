@@ -3,6 +3,7 @@ svg[name="svg-container-graph-id"] {
     width: 100% !important;
     height: 100% !important;
     margin: 0px;
+    max-width: none;
     /* height: calc(100% - 64px) !important; */
 }
 #graph-id-graph-wrapper {
