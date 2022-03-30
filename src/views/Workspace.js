@@ -12,7 +12,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 
-const drawerWidth = 240;
+const drawerWidth = '25%';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginLeft: -drawerWidth,
+    marginLeft: `-${drawerWidth}`,
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
@@ -237,6 +237,33 @@ export default function Workspace() {
         getAllNodesAndLinks();
       })
   };
+
+  const editLinkInDB = (linkToEdit) => {
+    console.log('linkToEdit: ', linkToEdit)
+    var myHeaders = new Headers();
+    //myHeaders.append("id", uuid);
+    myHeaders.append("link", JSON.stringify(linkToEdit));
+
+    var requestOptions = {
+      method: "PATCH",
+      headers: myHeaders,
+      body: linkToEdit,
+      redirect: "follow",
+    };
+
+    return fetch(`${baseURL}/link`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log("LINK EDITED: ", data))
+  }
+     
+
+  const editLink = function (linkToEdit) {
+    editLinkInDB(linkToEdit)
+      .then((data) =>{
+        console.log('data from editLink', data)
+        getAllNodesAndLinks();
+      })
+  }
 
 
   /**
@@ -456,6 +483,40 @@ export default function Workspace() {
       .catch((error) => console.log("FILE POST ERROR: ", error))
   }
 
+  const deleteAllNodesAndLinks = () => {
+    var myHeaders = new Headers();
+
+    var requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    return fetch(`${baseURL}/all`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("DELETE ALL NODES AND LINKS SUCESS");
+      })
+      .catch((error) => console.log("DELETE ALL ERROR: ", error));
+  };
+
+  /**
+   * Handle clearing the workspace of all data.
+   */
+  const clearWorkspace = function () {
+    // set the nodes and links to blank to avoid async issues.
+    setNodes([]);
+    setLinks([]);
+    // invoke the api to remove data from the db
+    deleteAllNodesAndLinks()
+      .then((e) =>{
+        console.log('WORKSPACE CLEARED', e);
+        // Eventhough the payload is empty, this function will force a re-render.
+        getAllNodesAndLinks();
+      });
+  };
+
+
   useEffect(() => {
     if (links) {
       setSelectedNodeLinks([])
@@ -480,9 +541,6 @@ export default function Workspace() {
 
       setSelectedNodeLinks(nameIdLinkedArr)
       setLinksNotSelected(nameIdNotLinkedArr)
-
-      console.log('selectedNodeLinks: ', selectedNodeLinks)
-      console.log('linksNotSelected: ', linksNotSelected)
     }
   }, [selectedNode]);
 
@@ -513,12 +571,17 @@ export default function Workspace() {
     handleDrawerOpen,
     selectedNodeLinks,
     setSelectedNodeLinks,
+    setLinksNotSelected,
     fileUpload,
     setFileUpload,
     postFile,
     linksRender,
     setLinksRender,
-    editNode
+    editNode,
+    selectedLink,
+    setSelectedLink,
+    editLink,
+    clearWorkspace
   };
   console.log('rendering workspace')
   return (

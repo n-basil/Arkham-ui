@@ -13,6 +13,7 @@
     "clsx": "^1.1.1",
     "d3": "^5.5.0 ",
     "keycloak-js": "^17.0.1",
+    "keycloak-mock": "^1.0.10",
     "react": "^16.4.1",
     "react-d3-graph": "^2.6.0",
     "react-dom": "^16.4.1",

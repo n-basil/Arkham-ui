@@ -23,11 +23,6 @@ export default function App() {
   let [username, setUsername] = React.useState("");
   let [password, setPassword] = React.useState("");
   
-
-
-
-
-
   // this is the context object exported from the AppContext.js file
   let contextObj = {
     username,

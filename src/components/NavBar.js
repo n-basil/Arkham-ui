@@ -14,7 +14,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MoreIcon from '@material-ui/icons/MoreVert';
 
 import LoginBtn from "../components/loginBtn";
-import logo from "../assets/Arkham_Logo.svg";
+import logo from "../assets/Arkham_Logo_Yellow.svg";
 
 
 
@@ -24,26 +24,24 @@ export default function NavBar(props) {
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
-    display: 'flex'
+    display: 'flex',
+    justifyContent: 'center'
   },
   appBar: {
     backgroundColor: '#333333',
-    maxHeight: '64px',
+    height: '8vh',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
-    width: `calc(100% - ${props.drawerWidth}px)`,
+    width: `calc(100% - ${props.drawerWidth})`,
     marginLeft: props.drawerWidth,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-  },
-  logo: {
-    display: 'flex-inline'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -111,6 +109,13 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  logo: {
+    maxHeight: '6vh',
+    color: 'yellow',
+    // marginLeft: '5vw',
+    marginTop: '1vh',
+    marginBottom: '1vh'
+  }
 }));
 
   const classes = useStyles();
@@ -148,8 +153,8 @@ const useStyles = makeStyles((theme) => ({
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
       <LoginBtn />
     </Menu>
   );
@@ -203,9 +208,9 @@ const useStyles = makeStyles((theme) => ({
         [classes.appBarShift]: props.open,
       })}
       >
-        <Toolbar>
+        <Toolbar data-testid="NavBar">
           <IconButton
-            data-testid="Hamburger"
+            data-testid="HamburgerBtn"
             edge="start"
             className={clsx(classes.menuButton, props.open && classes.hide)}
             color="inherit"
@@ -213,8 +218,11 @@ const useStyles = makeStyles((theme) => ({
             onClick={props.handleDrawerOpen}
           >
             <MenuIcon />
+
           </IconButton>
-          <div className={classes.search}>
+          
+          {/* THIS IS THE SEARCH BAR */}
+          {/* <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -227,10 +235,11 @@ const useStyles = makeStyles((theme) => ({
               }}
               inputProps={{ 'aria-label': 'search' }}
             />
-          </div>
+          </div> */}
           
-          <div className={classes.grow} />
-          {/* <img data-testid="logo" src={logo} className={classes.logo}/> */}
+          <div className={classes.grow} >
+            <img data-testid="logo" src={logo} className={classes.logo}/>
+          </div>
           <div className={classes.sectionDesktop}>
           
             {/* <IconButton aria-label="show 4 new mails" color="inherit">
@@ -245,6 +254,7 @@ const useStyles = makeStyles((theme) => ({
             </IconButton> */}
             
             <IconButton
+              data-testid="UserProfileBtn"
               edge="end"
               aria-label="account of current user"
               aria-controls={menuId}

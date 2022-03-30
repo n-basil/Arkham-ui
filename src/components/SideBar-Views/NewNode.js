@@ -8,7 +8,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import NativeSelect from "@material-ui/core/NativeSelect";
 import { InputBase } from "@material-ui/core/";
 import Divider from "@material-ui/core/Divider";
 import Slider from "@material-ui/core/Slider";
@@ -36,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     padding: theme.spacing(0, 1),
+    height: '4vw',
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",

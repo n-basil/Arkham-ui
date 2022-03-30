@@ -7,15 +7,9 @@ import Card from "@material-ui/core/Card";
 import {  useNavigate } from "react-router-dom";
 import { useKeycloak } from '@react-keycloak/web';
 
-
-
-import logo from "../assets/Arkham_Logo.svg";
+import logo from "../assets/Arkham_Logo_Black.svg";
 import LoginBtn from "../components/loginBtn";
 import "./Login.css";
-
-  
-
-
 
 export default function Login() {
 
@@ -25,15 +19,11 @@ export default function Login() {
 
   return (
     <Paper className="paper">
-    
-      <img data-testid="logo" src={logo} width="460px" />
+      <img data-testid="logo" src={logo} style={{maxWidth: '460px', marginBottom: '1vh'}} />
       <Card variant="outlined" className="loginCard">
-
         {keycloak.authenticated ? navigate("/workspace") : console.log("User is not authenticated")}
-
         <LoginBtn />
-
       </Card>
-    </Paper>
+    </Paper> 
   );
 }

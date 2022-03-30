@@ -6,7 +6,7 @@ import WorkspaceContext from "../context/WorkspaceContext";
 import { v4 as uuidv4 } from "uuid";
 import { useKeycloak } from "@react-keycloak/web";
 
-import "./Graph.css";
+import "./GraphRender.css";
 
 export default function GraphRender(props) {
 
@@ -51,7 +51,7 @@ export default function GraphRender(props) {
   const myConfig = {
     nodeHighlightBehavior: true,
     d3: {
-      gravity: -400,
+      // gravity: -400,
       // collapsible: true,
       // directed: true,
     },
@@ -60,10 +60,11 @@ export default function GraphRender(props) {
       size: 500,
       highlightStrokeColor: "#1E90FF",
       labelProperty: "name",
+      fontColor: '#F2F2F2'
     },
     link: {
       highlightColor: "#1E90FF",
-      color: "#333333",
+      color: "#999999",
       strokeWidth: 2,
     },
   };
@@ -87,7 +88,13 @@ export default function GraphRender(props) {
   };
 
   const onClickLink = function (src, tgt) {
-    setSelectedLink({ source: src, target: tgt });
+    let link = links.find(link => link.source === src && link.target === tgt);
+    let sourceNode = nodes.filter(node => node.id === link.source);
+    let targetNode = nodes.filter(node => node.id === link.target);
+    setSelectedLink({...link, sourceName: sourceNode[0].name, targetName: targetNode[0].name})
+    handleDrawerOpen();
+    setSelectedSideView("LinkView")
+    console.log("you selected a link")
     //console.log("selected link source: ", selectedLink.source)
   };
   const onClickGraph = function () {
@@ -125,6 +132,11 @@ export default function GraphRender(props) {
 
   //   // selectedNode.name? console.log("Selected Node Note: ", selectedNode.name) : console.log('no node selected')
   // }, [onClickNode]);
+
+  // useEffect(() => {
+  //   console.log("THIS IS YOUR SELECTED LINK: ", selectedLink)
+  //   console.log("THIS IS YOUR CURRENT LINKS ARRAY: ", links)
+  // }, [selectedLink])
 
 
   return (
