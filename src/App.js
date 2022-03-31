@@ -38,7 +38,7 @@ export default function App() {
           <Routes>
 
             <Route path="/" element={<Login />} />
-            <Route path="/workspace-dev" element={<Workspace />} />
+            {/* <Route path="/workspace-dev" element={<Workspace />} /> */}
 
             {/* Keycloak Hide page */}
             <Route

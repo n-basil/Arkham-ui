@@ -27,9 +27,13 @@ const useStyles = makeStyles((theme) => ({
     border: "2px solid #FDE311",
     backgroundColor: "#F2F2F2",
     borderRadius: theme.shape.borderRadius,
-    height: "6vh",
+    height: "5vh",
     width: "100%",
     padding: theme.spacing(1),
+  },
+  label: {
+    marginTop: '1vh',
+    marginBottom: '1vh'
   },
   drawerHeader: {
     display: "flex",
@@ -128,13 +132,13 @@ export default function NewNode(props) {
         onSubmit={(e) => { handleSubmit(e) }}
         className={classes.drawerContent}
       >
-        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Name:</Typography>
+        <Typography className={classes.label} variant="body2" component="p">Name:</Typography>
         <InputBase
           name="name"
           className={classes.textField}
           placeholder="Alpha"
         />
-        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Notes:</Typography>
+        <Typography className={classes.label}  variant="body2" component="p">Notes:</Typography>
         <InputBase
           name="notes"
           multiline
@@ -143,7 +147,7 @@ export default function NewNode(props) {
           style={{ height: "20vh" }}
           placeholder="Always take notes..."
         />
-        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Color:</Typography>
+        <Typography className={classes.label}  variant="body2" component="p">Color:</Typography>
         <Select
           name="color"
           className={classes.textField}
@@ -155,7 +159,7 @@ export default function NewNode(props) {
           <MenuItem value={"blue"}>Blue</MenuItem>
           <MenuItem value={"Green"}>Green</MenuItem>
         </Select>
-        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Shape:</Typography>
+        <Typography className={classes.label} variant="body2" component="p">Shape:</Typography>
         <Select
           name="symbolType"
           className={classes.textField}
@@ -169,7 +173,7 @@ export default function NewNode(props) {
           <MenuItem value={"triangle"}>Triangle</MenuItem>
           <MenuItem value={"wye"}>Wye</MenuItem>
         </Select>
-        <Typography gutterTop variant="body2" color="textSecondary" component="p">Size:</Typography>
+        <Typography className={classes.label} variant="body2" component="p">Size:</Typography>
         <PrettoSlider
           name="size"
           valueLabelDisplay="auto"

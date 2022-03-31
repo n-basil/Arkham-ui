@@ -33,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     padding: theme.spacing(1),
   },
+  label: {
+    marginTop: '1vh',
+    marginBottom: '1vh'
+  },
   drawerHeader: {
     display: "flex",
     alignItems: "center",
@@ -51,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
   },
   customHoverFocus: {
     "&:hover, &.Mui-focusVisible": {
-      backgroundColor: "red",
-      opacity: '0.75'
+      backgroundColor: "#FF0400",
+      opacity: '0.90'
     },
     "&.MuiIconButton-root": {
       padding: ".25vh"
@@ -138,7 +142,7 @@ export default function EditNode(props) {
     const snapshotLinks = selectedNodeLinks;
     snapshotLinks.splice(snapshotLinks.indexOf(linkToDelete.id), 1);
     deleteLink(selectedNode.id, linkToDelete.id)
-    deleteLink(linkToDelete, selectedNode.id)
+    deleteLink(linkToDelete.id, selectedNode.id)
     setSelectedNodeLinks(snapshotLinks)
     setLinksNotSelected([...linksNotSelected, linkToDelete])
   }
@@ -157,7 +161,7 @@ export default function EditNode(props) {
           </IconButton>
         </Grid>
         <Grid item>
-          <Typography className={classes.link}>
+          <Typography className={classes.link} variant="body2" color="textSecondary" component="p">
             {link.name}
           </Typography>
         </Grid>
@@ -204,19 +208,18 @@ export default function EditNode(props) {
         </IconButton>
       </div>
       <div className={classes.drawerContent}>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography className={classes.label} variant="body2" component="p">
           Delete Link: {LinksRender}
         </Typography>
-        
-        <Typography gutterBottom variant="body2" color="textSecondary" component="p">Add Link:</Typography>
+        <Typography className={classes.label} variant="body2" component="p">Add Link:</Typography>
         <div className={classes.formButtons}>
           <Select
             name="addLink"
             onChange={(e) => handeAddLinkChange(e)}
+            defaultValue={"Select a node..."}
             className={classes.textField}
             displayEmpty
             disableUnderline
-            placeholder=""
           >
             {/* <MenuItem value="" disabled>None</MenuItem> */}
             {AddLinksRender}
@@ -233,14 +236,14 @@ export default function EditNode(props) {
         <form
           onSubmit={(e) => { handleSubmit(e) }}
         >
-          <Typography gutterBottom variant="body2" color="textSecondary" component="p">Name:</Typography>
+          <Typography className={classes.label} variant="body2" component="p">Name:</Typography>
           <InputBase
             name="name"
             defaultValue={selectedNode.name}
             className={classes.textField}
           // placeholder={selectedNode.name}
           />
-          <Typography gutterBottom variant="body2" color="textSecondary" component="p">Notes:</Typography>
+          <Typography className={classes.label} variant="body2" component="p">Notes:</Typography>
           <InputBase
             name="notes"
             defaultValue={selectedNode.notes}
@@ -250,7 +253,7 @@ export default function EditNode(props) {
             style={{ height: "20vh" }}
           // placeholder={selectedNode.notes}
           />
-          <Typography gutterBottom variant="body2" color="textSecondary" component="p">Color:</Typography>
+          <Typography className={classes.label} variant="body2" component="p">Color:</Typography>
           <Select
             name="color"
             defaultValue={selectedNode.color}
@@ -263,7 +266,7 @@ export default function EditNode(props) {
             <MenuItem value={"blue"}>Blue</MenuItem>
             <MenuItem value={"Green"}>Green</MenuItem>
           </Select>
-          <Typography gutterBottom variant="body2" color="textSecondary" component="p">Shape:</Typography>
+          <Typography className={classes.label} variant="body2" component="p">Shape:</Typography>
           <Select
             name="symbolType"
             defaultValue={selectedNode.symbolType}
@@ -279,7 +282,7 @@ export default function EditNode(props) {
             <MenuItem value={"triangle"}>Triangle</MenuItem>
             <MenuItem value={"wye"}>Wye</MenuItem>
           </Select>
-          <Typography gutterTop variant="body2" color="textSecondary" component="p">Size:</Typography>
+          <Typography className={classes.label} variant="body2" component="p">Size:</Typography>
           <PrettoSlider
             name="size"
             // value={selectedNode.size}

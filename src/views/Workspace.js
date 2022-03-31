@@ -11,6 +11,8 @@ import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import Papa from 'papaparse';
+import { CSVLink, CSVDownload } from 'react-csv';
 
 const drawerWidth = '25%';
 
@@ -21,12 +23,13 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    // padding: theme.spacing(3),
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: `-${drawerWidth}`,
+    marginTop: '8vh'
   },
   contentShift: {
     transition: theme.transitions.create("margin", {
@@ -59,6 +62,8 @@ export default function Workspace() {
   let [linksRender, setLinksRender] = useState(false)
   let [fileUpload, setFileUpload] = useState(false);
   let [linksNotSelected, setLinksNotSelected] = useState(false)
+  let [outputData, setOutputData] = useState("")
+  let [exportFlag, setExportFlag] = useState(false)
 
   // let setSelectedNode = function (node) {
   //   console.log('setSelectedNode with node: ', node)
@@ -297,7 +302,7 @@ export default function Workspace() {
 
   const deleteNode = () => {
     setSelectedNode(false);
-    handleDrawerClose();
+    // handleDrawerClose();
     var myHeaders = new Headers();
     myHeaders.append("id", selectedNode.id);
 
@@ -516,6 +521,36 @@ export default function Workspace() {
       });
   };
 
+  const exportWorkspace = function () {
+
+    const nodeKeys = Object.keys(nodes[0])
+    const linkKeys = Object.keys(links[0])
+
+    let dataArray = []
+
+    for (let i = 0; i < nodes.length; i++) {
+      const nodeValues = Object.values(nodes[i])
+      const linkValues = Object.values(links[i])
+      //console.log("IN LOOP: ", nodeValues, linkValues)
+      const tempArr = nodeValues.concat(linkValues)
+      //console.log("Temp Arr: ", tempArr)
+      dataArray.push(tempArr)
+      //console.log("data array: ", dataArray)
+    }
+
+    const tempCSVObject = {
+      "fields": nodeKeys.concat(linkKeys),
+      "data": dataArray
+    }
+    // console.log("tempObj: ", tempCSVObject)
+
+    const output = Papa.unparse(tempCSVObject)
+    console.log("OUTPUT: ", output)
+
+    setOutputData(output);
+    setExportFlag(true);
+  }
+
 
   useEffect(() => {
     if (links) {
@@ -581,7 +616,11 @@ export default function Workspace() {
     selectedLink,
     setSelectedLink,
     editLink,
-    clearWorkspace
+    clearWorkspace,
+    exportWorkspace,
+    outputData,
+    exportFlag,
+    setExportFlag
   };
   console.log('rendering workspace')
   return (
@@ -603,7 +642,7 @@ export default function Workspace() {
             [classes.contentShift]: open,
           })}
         >
-          <div className={classes.drawerHeader} />
+          {/* <div className={classes.drawerHeader} /> */}
           <GraphRender
             data-testid='Graph'
             handleDrawerOpen={handleDrawerOpen}

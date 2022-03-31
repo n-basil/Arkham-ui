@@ -29,10 +29,14 @@ const useStyles = makeStyles((theme) => ({
         border: "2px solid #FDE311",
         backgroundColor: "#F2F2F2",
         borderRadius: theme.shape.borderRadius,
-        height: "6vh",
+        height: "5vh",
         width: "100%",
         padding: theme.spacing(1),
     },
+    label: {
+        marginTop: '1vh',
+        marginBottom: '1vh'
+      },
     drawerHeader: {
         display: "flex",
         alignItems: "center",
@@ -151,11 +155,11 @@ export default function LinkView(props) {
             </div>
             <div className={classes.drawerContent}>
                 {/* {selectedLink?  */}
-                <Typography color="textSecondary" component="h5" variant="h5">
+                <Typography component="h5" variant="h5">
                     Link from {selectedLink.sourceName} to {selectedLink.targetName}
                 </Typography>
                 <form onSubmit={(e) => { handleSubmit(e) }}>
-                    <Typography gutterBottom variant="body2" color="textSecondary" component="p">Notes:</Typography>
+                    <Typography className={classes.label} variant="body2" component="p">Notes:</Typography>
                     <InputBase
                         name="notes"
                         defaultValue={selectedLink.notes}
@@ -164,7 +168,7 @@ export default function LinkView(props) {
                         className={classes.textField}
                         style={{ height: "20vh" }}
                     />
-                    <Typography gutterBottom variant="body2" color="textSecondary" component="p">Color:</Typography>
+                    <Typography className={classes.label} variant="body2" component="p">Color:</Typography>
                     <Select
                         name="color"
                         defaultValue={selectedLink.color}
@@ -177,25 +181,27 @@ export default function LinkView(props) {
                         <MenuItem value={"blue"}>Blue</MenuItem>
                         <MenuItem value={"Green"}>Green</MenuItem>
                     </Select>
-                    <Typography gutterBottom variant="body2" color="textSecondary" component="p">Type:</Typography>
+                    <Typography className={classes.label} variant="body2" component="p">Type:</Typography>
                     <Select
                         name="type"
                         defaultValue={selectedLink.type}
                         className={classes.textField}
+                        displayEmpty
                         disableUnderline
                     >
                         <MenuItem value={"STRAIGHT"}>Straight</MenuItem>
                         <MenuItem value={"CURVE_SMOOTH"}>Curve Smooth</MenuItem>
                         <MenuItem value={"CURVE_FULL"}>Curve Full</MenuItem>
                     </Select>
-                    <Typography gutterTop variant="body2" color="textSecondary" component="p">Stroke Width:</Typography>
+                    <Typography className={classes.label} variant="body2" component="p">Stroke Width:</Typography>
                     <PrettoSlider
                         name="strokeWidth"
                         valueLabelDisplay="auto"
                         aria-label="pretto slider"
                         min={.5}
-                        max={3}
-                        defaultValue={selectedLink.size ? selectedLink.size : 1.5}
+                        max={5}
+                        step={0.1}
+                        defaultValue={selectedLink.strokeWidth ? selectedLink.strokeWidth : 1.5}
                     />
                     <div className={classes.formButtons}>
                         <Button
@@ -203,7 +209,7 @@ export default function LinkView(props) {
                                 deleteLinkHandle(selectedLink.source, selectedLink.target)
                             }}
                             variant="contained"
-                            style={{ backgroundColor: "red" }}
+                            style={{ backgroundColor: "#FF0400" }}
                         >
                             Delete
                         </Button>

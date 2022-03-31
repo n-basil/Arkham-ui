@@ -26,7 +26,7 @@ export default function LoginBtn () {
 
             onClick={() => keycloak.login()}
           >
-            Authenticate
+            Login
           </Button>
         )}
          {/* If the user is logged in, show a button with the username */}

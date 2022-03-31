@@ -16,6 +16,8 @@ import Grid from '@material-ui/core/Grid';
 import LinkIcon from '@material-ui/icons/Link';
 import "./Default.css";
 
+import { CSVLink, CSVDownload } from 'react-csv';
+
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -60,8 +62,9 @@ export default function Default(props) {
     deleteLink,
     links,
     clearWorkspace,
+    exportWorkspace,
     selectedNodeLinks, setSelectedNodeLinks,
-    fileUpload, setFileUpload, postFile } = useContext(WorkspaceContext);
+    fileUpload, setFileUpload, postFile, outputData, exportFlag, setExportFlag } = useContext(WorkspaceContext);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -79,7 +82,7 @@ export default function Default(props) {
           <LinkIcon />
         </Grid>
         <Grid item>
-          <Typography className={classes.link}>
+          <Typography className={classes.link} >
             {link.name}
           </Typography>
         </Grid>
@@ -96,17 +99,17 @@ export default function Default(props) {
         
           {selectedNode ? (
             <>
-              <Typography gutterBottom variant="h3" component="h3">
+              <Typography gutterBottom component="h4" variant="h4">
                 {selectedNode.name}
               </Typography>
-              <Typography component="h5" variant="h5">
+              <Typography component="h6" variant="h6">
                 Notes:
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
                 {selectedNode.notes}
               </Typography>
               <Divider className={classes.divider}/>
-              <Typography component="h5" variant="h5">
+              <Typography component="h6" variant="h6">
                 Links:
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
@@ -117,10 +120,10 @@ export default function Default(props) {
             <>
             <div>
               <form action='http://arkhamdevops.eastus.cloudapp.azure.com:6969/file' encType="multipart/form-data" method="POST" >
-                <Typography color="textSecondary" component="h5" variant="h5">
+                <Typography component="h4" variant="h4">
                   CSV Import
                 </Typography>
-                <input type="file" name="avatar" />
+                <input style={{ margin: '1vh' }} type="file" name="avatar" />
                 {/* <input type="submit" value="Upload a file" /> */}
                 <div className={classes.formButtons}>
                   <Button
@@ -128,18 +131,42 @@ export default function Default(props) {
                     variant="contained"
                     style={{ backgroundColor: "#FDE311" }}
                   >
-                    Upload
+                    Import
                   </Button>
                 </div>
               </form>
             </div>  
               <div style={{ height:`100%`, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+            {exportFlag ? (
+              <>
+              <Button
+                  onClick={() => setExportFlag(false)}
+                  variant="contained"
+                  style={{ backgroundColor: "#FDE311", marginBottom: '1vh' }}
+                >
+              <CSVDownload data={outputData} separator={","} />
+              Export Workspace
+              </Button>
+              </>
+              ) : (
+                <>
+              <Button
+                  onClick={() => {
+                    exportWorkspace()
+                  }}
+                  variant="contained"
+                  style={{ backgroundColor: "#FDE311", marginBottom: '1vh' }}
+                >
+                  Export Workspace
+                </Button>
+                </>
+            )}
                 <Button
                   onClick={() => {
                     clearWorkspace()
                   }}
                   variant="contained"
-                  style={{ backgroundColor: "red" }}
+                  style={{ backgroundColor: "#FF0400" }}
                 >
                   Clear Workspace
                 </Button>
