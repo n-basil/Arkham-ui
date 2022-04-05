@@ -1,5 +1,6 @@
 .paper {
-    background-color: #C0C0C0 !important;
+    background-color: #1c1c1c !important;
+    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,13 +9,17 @@
 }
 
 .loginCard {
-    background-color: #333333 !important;
+    /* background-color: #333333 !important; */
+    background-color: transparent !important;
     display: flex;
+   
     justify-content: space-around;
     align-items: center;
     flex-direction: column;
     height: 25%;
-    width: 30%;
+    /* width: 40%; */
+    width: 460px;
+    border-color: transparent !important;
 }
 
 .inputs {

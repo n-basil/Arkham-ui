@@ -4,6 +4,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { mergeClasses } from '@material-ui/styles';
 import Button from "@material-ui/core/Button";
 
+
 const useStyles = makeStyles(theme => ({
     button: {
         backgroundColor: "#FDE311"
@@ -25,7 +26,7 @@ export default function LoginBtn () {
 
             onClick={() => keycloak.login()}
           >
-            Authenticate
+            Login
           </Button>
         )}
          {/* If the user is logged in, show a button with the username */}

@@ -1,16 +1,16 @@
 // REACT
 import React from "react";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Redirect } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import AppContext from "./context/AppContext";
 // KEY CLOAK
 import { ReactKeycloakProvider } from "@react-keycloak/web";
-// import keycloak from "./components/Keycloak";
+import keycloak from "./components/Keycloak";
 
 import Keycloak from "keycloak-js";
-//import ArkhamAuthenticator from "./components/ArkhamAuthenticator";
 import HideRoute from "./components/HideRoute";
+import { useKeycloak } from "@react-keycloak/web";
 
 // ARKHAM
 import Paper from "@material-ui/core/Paper";
@@ -22,14 +22,8 @@ export default function App() {
   // let [selectedNode, setSelectedNode] = useState(false);
   let [username, setUsername] = React.useState("");
   let [password, setPassword] = React.useState("");
-
-  // This instanciates the keycloak object
-  const keycloak = new Keycloak({
-    url: "http://localhost:8080",
-    realm: "arkham",
-    clientId: "arkham-ui",
-  });
-
+  
+  // this is the context object exported from the AppContext.js file
   let contextObj = {
     username,
     setUsername,
@@ -39,31 +33,27 @@ export default function App() {
 
   return (
     <>
-  
-        <AppContext.Provider value={contextObj}>
+      <AppContext.Provider value={contextObj}>
         <ReactKeycloakProvider authClient={keycloak}>
           <Routes>
+
             <Route path="/" element={<Login />} />
+            {/* <Route path="/workspace-dev" element={<Workspace />} /> */}
 
-            <Route path="/workspace-dev" element={<Workspace />} />
-
-        
-            
             {/* Keycloak Hide page */}
             <Route
               path="/workspace"
               element={
                 <HideRoute>
-                  <p>wow</p>
+      
                   <Workspace />
+
                 </HideRoute>
               }
             />
-            
           </Routes>
-          </ReactKeycloakProvider>
-        </AppContext.Provider>
-      
+        </ReactKeycloakProvider>
+      </AppContext.Provider>
     </>
   );
 }

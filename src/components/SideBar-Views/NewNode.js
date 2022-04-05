@@ -1,31 +1,57 @@
 import React from "react";
-import { useContext } from "react";
-import AppContext from "../../context/AppContext";
+import { useContext, useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import WorkspaceContext from "../../context/WorkspaceContext";
-import { v4 as uuidv4 } from "uuid";
 
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles, useTheme } from "@material-ui/core/styles";
+import IconButton from '@material-ui/core/IconButton';
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import NativeSelect from "@material-ui/core/NativeSelect";
 import { InputBase } from "@material-ui/core/";
+import Divider from "@material-ui/core/Divider";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
-  button: {
-    backgroundColor: "#FDE311",
-    margin: "2%",
+  formButtons: {
+    display: 'flex',
+    flexDirection: "row",
+    justifyContent: "flex-end"
   },
 
   textField: {
     border: "2px solid #FDE311",
     backgroundColor: "#F2F2F2",
     borderRadius: theme.shape.borderRadius,
-    height: "6vh",
+    height: "5vh",
+    width: "100%",
     padding: theme.spacing(1),
-    margin: "2vh",
   },
+  label: {
+    marginTop: '1vh',
+    marginBottom: '1vh'
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    height: '4vw',
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-end",
+  },
+  backButton: {
+    display: "flex",
+    alignItems: "center",
+    // justifyContent: "flex-start",
+  },
+  drawerContent: {
+    padding: theme.spacing(1)
+  }
 }));
 
 const PrettoSlider = withStyles({
@@ -58,12 +84,12 @@ const PrettoSlider = withStyles({
   },
 })(Slider);
 
-
-
 export default function NewNode(props) {
   const classes = useStyles();
-  const { addNewNode, selectedNode, setNewNode } = useContext(WorkspaceContext);
-
+  const theme = useTheme();
+  const { handleDrawerClose, addNewNode, setNodes, setLinks, nodes, links } = useContext(WorkspaceContext);
+  let [newNode, setNewNode] = useState({ id: uuidv4() });
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     let newId = uuidv4();
@@ -74,82 +100,97 @@ export default function NewNode(props) {
       name: e.target.name.value,
       notes: e.target.notes.value,
       color: e.target.color.value,
-      shape: e.target.shape.value
-      // size: e.target.size.value
+      symbolType: e.target.symbolType.value,
+      size: e.target.size.value
     }
     addNewNode(nodeFromForm)
-
-  
   };
+
   return (
     <>
-      <ArrowBackIcon
-        onClick={() => {
-          props.setSelectedSideView("Default");
-        }}
-      />
-      <form onSubmit={(e) => {handleSubmit(e)}}>
-        <Typography gutterBottom>Name</Typography>
+      <div className={classes.drawerHeader}>
+        <IconButton onClick={handleDrawerClose}>
+          {theme.direction === "ltr" ? (
+            <ChevronLeftIcon />
+          ) : (
+            <ChevronRightIcon />
+          )}
+        </IconButton>
+      </div>
+      <Divider />
+      <div className={classes.backButton}>
+        <IconButton>
+          <ArrowBackIcon
+            fontSize="small"
+            onClick={() => {
+              props.setSelectedSideView("Default");
+            }}
+          />
+        </IconButton>
+      </div>
+      <form
+        onSubmit={(e) => { handleSubmit(e) }}
+        className={classes.drawerContent}
+      >
+        <Typography className={classes.label} variant="body2" component="p">Name:</Typography>
         <InputBase
           name="name"
           className={classes.textField}
-          placeholder="Name"
+          placeholder="Alpha"
         />
-        <Typography gutterBottom>Notes</Typography>
+        <Typography className={classes.label}  variant="body2" component="p">Notes:</Typography>
         <InputBase
           name="notes"
           multiline
           rows={7}
           className={classes.textField}
           style={{ height: "20vh" }}
-          placeholder="Notes"
+          placeholder="Always take notes..."
         />
-        <Typography gutterBottom>Color</Typography>
-        <NativeSelect
+        <Typography className={classes.label}  variant="body2" component="p">Color:</Typography>
+        <Select
           name="color"
           className={classes.textField}
-          // value={age}
-          // onChange={handleChange}
-          // input={<BootstrapInput />}
+          displayEmpty
+          disableUnderline
         >
-          <option aria-label="None" value="" />
-          <option value={"blue"}>Blue</option>
-          <option value={"red"}>Red</option>
-          <option value={"yellow"}>Yellow</option>
-        </NativeSelect>
-        <Typography gutterBottom>Shape</Typography>
-        <NativeSelect
-          name="shape"
+          <MenuItem alue={"yellow"}>Yellow</MenuItem>
+          <MenuItem value={"red"}>Red</MenuItem>
+          <MenuItem value={"blue"}>Blue</MenuItem>
+          <MenuItem value={"Green"}>Green</MenuItem>
+        </Select>
+        <Typography className={classes.label} variant="body2" component="p">Shape:</Typography>
+        <Select
+          name="symbolType"
           className={classes.textField}
-          placeholder=""
-          // value={age}
-          // onChange={handleChange}
-          // input={<BootstrapInput />}
+          displayEmpty
+          disableUnderline
         >
-          <option aria-label="None" value="" />
-          <option value={"circle"}>Circle</option>
-          <option value={"cross"}>Cross</option>
-          <option value={"diamond"}>Diamond</option>
-          <option value={"star"}>star</option>
-          <option value={"triangle"}>Triangle</option>
-          <option value={"wye"}>Wye</option>
-        </NativeSelect>
-        <Typography gutterBottom>Size</Typography>
+          <MenuItem alue={"circle"}>Circle</MenuItem>
+          <MenuItem value={"cross"}>Cross</MenuItem>
+          <MenuItem value={"diamond"}>Diamond</MenuItem>
+          <MenuItem value={"star"}>Star</MenuItem>
+          <MenuItem value={"triangle"}>Triangle</MenuItem>
+          <MenuItem value={"wye"}>Wye</MenuItem>
+        </Select>
+        <Typography className={classes.label} variant="body2" component="p">Size:</Typography>
         <PrettoSlider
           name="size"
           valueLabelDisplay="auto"
           aria-label="pretto slider"
           min={0}
-          max={600}
-          defaultValue={20}
+          max={2500}
+          defaultValue={500}
         />
-        <Button 
-        type="submit"
-        variant="contained" 
-        className={classes.button}
-        >
-          Make Node
-        </Button>
+        <div className={classes.formButtons}>
+          <Button
+            type="submit"
+            variant="contained"
+            style={{ backgroundColor: "#FDE311" }}
+          >
+            Add Node
+          </Button>
+        </div>
       </form>
     </>
   );

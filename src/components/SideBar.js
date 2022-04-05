@@ -1,53 +1,69 @@
 import React from "react";
-import { useState } from "react"
+import { useContext, useEffect } from "react"
+import WorkspaceContext from "../context/WorkspaceContext";
+
 import Default from  "./SideBar-Views/Default";
 import NewNode from "./SideBar-Views/NewNode"
+import EditNode from "./SideBar-Views/EditNode"
+import LinkView from "./SideBar-Views/LinkView"
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
-const drawerWidth = 240;
+
+const drawerWidth = '25%';
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    margin: 0,
+    // width: '100vw',
+    // height: '100vh',
+    
+
+
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: '#C0C0C0',
-    padding: theme.spacing(1)
-  },
-  drawerHeader: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
+    backgroundColor: '#999999',   
+    // height: '100vh', 
   },
 }));
 
 export default function SideBar(props) {
-  let [ selectedSideView, setSelectedSideView ] = useState('Default');
+  const { selectedSideView, setSelectedSideView, selectedNode, selectedLink } = useContext(WorkspaceContext);
+  // let setSelectedSideView = function (view) {
+  //   console.log('setSelectedSideView call with: ', view)
+  //   setSelectedSideViewOG(view)
+  // }
   const classes = useStyles();
-  const theme = useTheme();
 
   function SideBarRender() {
-    console.log('view:', selectedSideView)
+    console.log('view rendered with:', selectedSideView)
     if (selectedSideView === 'Default') {
-      return <Default setSelectedSideView={setSelectedSideView}/>;
+      return <Default 
+      setSelectedSideView={setSelectedSideView}
+      />;
     } else if (selectedSideView === 'NewNode') {
-      return <NewNode setSelectedSideView={setSelectedSideView}/>;
+      return <NewNode 
+      setSelectedSideView={setSelectedSideView}
+      />;
+    } else if (selectedSideView === 'EditNode' && selectedNode) {
+      return <EditNode 
+      setSelectedSideView={setSelectedSideView}
+      />;
+    } else if (selectedSideView === 'LinkView') {
+      return <LinkView 
+      setSelectedSideView={setSelectedSideView}
+      />;
     }
   }
 
   return (
+    // <></>
       <Drawer
+        data-testid="SideBarDrawer"
         className={classes.drawer}
         variant="persistent"
         anchor="left"
@@ -56,16 +72,6 @@ export default function SideBar(props) {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={props.handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </div>
-        <Divider />
         <SideBarRender />      
       </Drawer>
   );
